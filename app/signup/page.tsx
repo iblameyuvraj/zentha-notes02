@@ -113,10 +113,29 @@ export default function SignupPage() {
         subjectCombo: mapSubjectComboToValue(subjectCombo)
       }
 
-      const { error } = await signUp(email, password, userData)
+      // Add timeout to prevent hanging
+      const signupPromise = signUp(email, password, userData)
+      const timeoutPromise = new Promise<{ error: any }>((_, reject) => 
+        setTimeout(() => reject(new Error('Signup timeout')), 10000)
+      )
+
+      const result = await Promise.race([signupPromise, timeoutPromise])
+      const { error } = result
 
       if (error) {
-        setError(error.message || "Failed to create account")
+        console.log('Signup error:', error)
+        
+        // Handle different signup error cases
+        if (error.message?.includes('User already registered')) {
+          setError("An account with this email already exists. Please login instead.")
+        } else if (error.message?.includes('Password should be at least')) {
+          setError("Password must be at least 6 characters long")
+        } else if (error.message?.includes('Invalid email')) {
+          setError("Please enter a valid email address")
+        } else {
+          setError(error.message || "Failed to create account")
+        }
+        
         setLoading(false)
         return
       }
@@ -124,12 +143,17 @@ export default function SignupPage() {
       setLoading(false)
       setSuccess(true)
       
-      // Redirect after 2 seconds
+      // Redirect after 1 second
       setTimeout(() => {
         router.push('/login')
-      }, 2000)
+      }, 1000)
     } catch (error) {
-      setError("An unexpected error occurred")
+      console.error('Signup error:', error)
+      if (error instanceof Error && error.message === 'Signup timeout') {
+        setError("Signup is taking too long. Please try again.")
+      } else {
+        setError("An unexpected error occurred")
+      }
       setLoading(false)
     }
   }
@@ -145,7 +169,7 @@ export default function SignupPage() {
                 <h1 className="text-2xl font-semibold">Zentha Notes</h1>
               </div>
               <h2 className="mb-6 text-4xl font-bold">Account Created!</h2>
-              <p className="mb-12 text-lg">Your account has been successfully created.</p>
+              <p className="mb-12 text-lg">Please check your email to verify your account.</p>
 
               <div className="w-full max-w-sm space-y-4">
                 <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
@@ -162,10 +186,10 @@ export default function SignupPage() {
                   <div className="flex items-center gap-4">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </span>
-                    <span className="text-lg">Redirecting to Login</span>
+                    <span className="text-lg">Check Email for Verification</span>
                   </div>
                 </div>
               </div>
@@ -183,7 +207,7 @@ export default function SignupPage() {
                 </svg>
               </div>
               <h2 className="mb-2 text-3xl font-bold text-white">Account Created!</h2>
-              <p className="mb-8 text-gray-400">Redirecting to login page...</p>
+              <p className="mb-8 text-gray-400">Please check your email to verify your account before logging in.</p>
             </div>
           </div>
         </div>

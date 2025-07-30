@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Starting signup with data:', { email, userData })
       
-      // First, try to create the user
+      // Create the user account
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -101,47 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('User created successfully:', data.user?.id)
 
-      if (data.user) {
-        // Wait a moment for any automatic profile creation
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        
-        // Check if profile already exists
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', data.user.id)
-          .single()
-
-        if (!existingProfile) {
-          // Manually create profile entry
-          try {
-            const { error: profileError } = await supabase
-              .from('profiles')
-              .insert({
-                id: data.user.id,
-                email: data.user.email,
-                full_name: `${userData.firstName} ${userData.lastName}`,
-                role: 'student',
-                year: userData.year,
-                college_id: userData.collegeId,
-                subject_combo: userData.subjectCombo
-              })
-
-            if (profileError) {
-              console.error('Error creating profile:', profileError)
-              // Still return success as user was created
-            } else {
-              console.log('Profile created successfully')
-            }
-          } catch (profileError) {
-            console.error('Profile creation error:', profileError)
-            // Still return success as user was created
-          }
-        } else {
-          console.log('Profile already exists')
-        }
-      }
-
+      // Return success immediately - profile will be created by trigger or on first login
       return { error: null }
     } catch (error) {
       console.error('Signup error:', error)

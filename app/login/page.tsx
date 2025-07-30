@@ -29,7 +29,19 @@ export default function LoginPage() {
       const { error } = await signIn(email, password)
       
       if (error) {
-        setError("Email or Password is incorrect")
+        console.log('Login error:', error)
+        
+        // Handle different error cases
+        if (error.message?.includes('Email not confirmed') || 
+            error.message?.includes('Email not verified') ||
+            error.message?.includes('Invalid login credentials') && error.message?.includes('email')) {
+          setError("Please check your email and verify your account before logging in")
+        } else if (error.message?.includes('Invalid login credentials')) {
+          setError("Email or Password is incorrect")
+        } else {
+          setError(error.message || "An error occurred during login")
+        }
+        
         setLoading(false)
         return
       }
@@ -51,6 +63,7 @@ export default function LoginPage() {
         }
       }, 2000)
     } catch (error) {
+      console.error('Login error:', error)
       setError("An unexpected error occurred")
       setLoading(false)
     }
