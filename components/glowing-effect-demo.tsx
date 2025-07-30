@@ -10,26 +10,26 @@ export default function GlowingEffectDemo() {
       <GridItem
         area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
         icon={<BookOpen className="h-4 w-4 text-white/80" />}
-        title={<span className="text-white">Rich Text Editor</span>}
-        description={<span className="text-white/80">Write with a powerful editor that supports markdown, formatting, and media embedding.</span>}
+        title={<span className="text-white">Format</span>}
+        description={<span className="text-white/80">All documents are in pdf and images format.</span>}
       />
       <GridItem
         area="md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]"
         icon={<Search className="h-4 w-4 text-white/80" />}
-        title={<span className="text-white">Smart Search</span>}
-        description={<span className="text-white/80">Find any note instantly with our AI-powered search that understands context and content.</span>}
+        title={<span className="text-white">Smart Categorization</span>}
+        description={<span className="text-white/80">You can only see the notes and pyq that are relevant to your semester and section.</span>}
       />
       <GridItem
         area="md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]"
         icon={<Lock className="h-4 w-4 text-white/80" />}
         title={<span className="text-white">Secure & Private</span>}
-        description={<span className="text-white/80">Your notes are encrypted end-to-end. Only you can access your thoughts and ideas.</span>}
+        description={<span className="text-white/80">Your data and password are encrypted end-to-end. Only you can access your data.</span>}
       />
       <GridItem
         area="md:[grid-area:2/7/3/13] xl:[grid-area:1/8/2/13]"
         icon={<Sparkles className="h-4 w-4 text-white/80" />}
-        title={<span className="text-white">AI-Powered Organization</span>}
-        description={<span className="text-white/80">Let AI help you organize, tag, and connect your notes automatically.</span>}
+        title={<span className="text-white">Ask AI</span>}
+        description={<span className="text-white/80">Ask AI to understand your Notes, Pyq, Mid-term, by a simple click.</span>}
       />
       <GridItem
         area="md:[grid-area:3/1/4/13] xl:[grid-area:2/8/3/13]"

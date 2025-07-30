@@ -1,0 +1,82 @@
+{
+  "subject": "Communication Skills",
+  "description": "RTU Communication Skills Previous Year Question Papers",
+  "papers": [
+    {
+      "id": 1,
+      "title": "RTU Communication Skills 2023-2024 Semester I",
+      "subject": "Communication Skills",
+      "semester": "1st Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU COMMUNICATION  SKILL/2023-2024 SEM-I.pdf",
+      "size": "1.7MB",
+      "pages": 0
+    },
+    {
+      "id": 2,
+      "title": "RTU Communication Skills 2023-2024 Semester II",
+      "subject": "Communication Skills",
+      "semester": "2nd Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU COMMUNICATION  SKILL/2023-2024 SEM-II.pdf",
+      "size": "136KB",
+      "pages": 1549
+    },
+    {
+      "id": 3,
+      "title": "RTU Communication Skills 2022-2023 Semester I",
+      "subject": "Communication Skills",
+      "semester": "1st Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU COMMUNICATION  SKILL/2022-2023 SEM-I.pdf",
+      "size": "522KB",
+      "pages": 2122
+    },
+    {
+      "id": 4,
+      "title": "RTU Communication Skills 2022-2023 Semester II",
+      "subject": "Communication Skills",
+      "semester": "2nd Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU COMMUNICATION  SKILL/2022-2023 SEM-II.pdf",
+      "size": "812KB",
+      "pages": 4424
+    },
+    {
+      "id": 5,
+      "title": "RTU Communication Skills 2021-2022 Semester I",
+      "subject": "Communication Skills",
+      "semester": "1st Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU COMMUNICATION  SKILL/2021-2022 SEM-I.pdf",
+      "size": "106KB",
+      "pages": 441
+    },
+    {
+      "id": 6,
+      "title": "RTU Communication Skills 2021-2022 Semester II",
+      "subject": "Communication Skills",
+      "semester": "2nd Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU COMMUNICATION  SKILL/2021-2022 SEM-II.pdf",
+      "size": "1.5MB",
+      "pages": 0
+    }
+  ],
+  "totalPapers": 6,
+  "years": ["2023-2024", "2022-2023", "2021-2022"],
+  "semesters": ["1st Semester", "2nd Semester"],
+  "lastUpdated": "2024-01-01"
+}

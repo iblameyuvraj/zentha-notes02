@@ -11,7 +11,7 @@ export default function TextRevealCardDemo() {
       >
         <TextRevealCardTitle>How to Use Zentha Notes</TextRevealCardTitle>
         <TextRevealCardDescription>
-          Scroll or move your mouse over the card to reveal powerful features and learn how to master your note-taking workflow with Zentha Notes.
+          Scroll or move your mouse over the card to reveal powerful features and learn how to master your workflow with Zentha Notes.
         </TextRevealCardDescription>
       </TextRevealCard>
     </div>

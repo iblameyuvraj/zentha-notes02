@@ -1,0 +1,82 @@
+{
+  "subject": "Mechanical Engineering",
+  "description": "RTU Mechanical Engineering Previous Year Question Papers",
+  "papers": [
+    {
+      "id": 1,
+      "title": "RTU Mechanical Engineering 2023-2024 Semester I",
+      "subject": "Mechanical Engineering",
+      "semester": "1st Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-I.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU MECHANICAL /2023-2024 SEM-I.pdf",
+      "size": "1.1MB",
+      "pages": 0
+    },
+    {
+      "id": 2,
+      "title": "RTU Mechanical Engineering 2023-2024 Semester II",
+      "subject": "Mechanical Engineering",
+      "semester": "2nd Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-II.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU MECHANICAL /2023-2024 SEM-II.pdf",
+      "size": "98KB",
+      "pages": 1107
+    },
+    {
+      "id": 3,
+      "title": "RTU Mechanical Engineering 2022-2023 Semester I",
+      "subject": "Mechanical Engineering",
+      "semester": "1st Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-I.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU MECHANICAL /2022-2023 SEM-I.pdf",
+      "size": "373KB",
+      "pages": 1480
+    },
+    {
+      "id": 4,
+      "title": "RTU Mechanical Engineering 2022-2023 Semester II",
+      "subject": "Mechanical Engineering",
+      "semester": "2nd Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-II.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU MECHANICAL /2022-2023 SEM-II.pdf",
+      "size": "700KB",
+      "pages": 3750
+    },
+    {
+      "id": 5,
+      "title": "RTU Mechanical Engineering 2021-2022 Semester I",
+      "subject": "Mechanical Engineering",
+      "semester": "1st Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-I.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU MECHANICAL /2021-2022 SEM-I.pdf",
+      "size": "67KB",
+      "pages": 294
+    },
+    {
+      "id": 6,
+      "title": "RTU Mechanical Engineering 2021-2022 Semester II",
+      "subject": "Mechanical Engineering",
+      "semester": "2nd Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-II.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU MECHANICAL /2021-2022 SEM-II.pdf",
+      "size": "1.2MB",
+      "pages": 0
+    }
+  ],
+  "totalPapers": 6,
+  "years": ["2023-2024", "2022-2023", "2021-2022"],
+  "semesters": ["1st Semester", "2nd Semester"],
+  "lastUpdated": "2024-01-01"
+}

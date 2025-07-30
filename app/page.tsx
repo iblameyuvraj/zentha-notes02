@@ -3,7 +3,7 @@ import FlipWordsDemo from "@/components/flip-words-demo"
 import GlowingEffectDemo from "@/components/glowing-effect-demo"
 import FloatingDockDemo from "@/components/floating-dock-demo"
 import GoogleGeminiEffectDemo from "@/components/google-gemini-effect-demo"
-// import { WavyBackground } from "@/components/ui/wavy-background"
+
 
 export default function Home() {
   return (
@@ -25,7 +25,7 @@ export default function Home() {
       <section id="features" className="py-20 px-4 bg-black">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
-            Powerful Features for Modern Note-Taking
+            Powerful Features of Zentha Notes
           </h2>
           <GlowingEffectDemo />
         </div>
@@ -37,7 +37,7 @@ export default function Home() {
       <footer className="py-20 bg-black">
         <FloatingDockDemo />
         <div className="text-center mt-8">
-          <p className="text-neutral-400">© 2024 Zentha Notes. Made with ❤️ for better productivity.</p>
+          <p className="text-neutral-400">© {new Date().getFullYear()} Zentha Notes. Made by <a href="https://zentha.in" className="text-white">zentha studio.</a></p>
         </div>
       </footer>
     </div>

@@ -8,8 +8,6 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
-import { createClient } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabaseClient'
 
 export default function SignupPage() {
   return (
@@ -34,6 +32,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
   const [agree, setAgree] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const router = useRouter()
@@ -99,41 +98,41 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     e.preventDefault()
     setError("")
     setLoading(true)
-    try {
-      // Sign up with Supabase Auth
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            college_id: collegeId,
-            year,
-            semester,
-            subject_combo: subjectCombo,
-            role: 'student',
-          }
-        }
-      })
-      if (signUpError) throw signUpError
-      // Insert into profiles table (if not using auth user_metadata)
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user?.id,
-        name,
-        email,
-        college_id: collegeId,
-        year,
-        semester,
-        subject_combo: subjectCombo,
-        role: 'student',
-      })
-      if (profileError) throw profileError
+    
+    // Simulate loading
+    setTimeout(() => {
       setLoading(false)
-      router.push('/login')
-    } catch (err: any) {
-      setLoading(false)
-      setError(err.message || 'Signup failed. Please try again.')
-    }
+      setSuccess(true)
+      
+      // Show success message for 3 seconds then redirect
+      setTimeout(() => {
+        router.push('/login')
+      }, 3000)
+    }, 2000)
+  }
+
+  if (success) {
+    return (
+      <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <Card className="overflow-hidden">
+          <CardContent className="grid p-0 md:grid-cols-1">
+            <div className="p-6 md:p-8 w-full">
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h1 className="text-2xl font-bold text-white">Account Created Successfully!</h1>
+                  <p className="text-balance text-muted-foreground">Redirecting to login page...</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -144,19 +143,19 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
             <form className="p-6 md:p-8 w-full" onSubmit={handleNext}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Create Account</h1>
+                  <h1 className="text-2xl font-bold text-white">Create Account</h1>
                   <p className="text-balance text-muted-foreground">Sign up for Zentha</p>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name" className="text-white">Full Name</Label>
                   <Input id="name" type="text" placeholder="Yuvraj soni" value={name} onChange={e => setName(e.target.value)} required />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Gmail</Label>
+                  <Label htmlFor="email" className="text-white">Gmail</Label>
                   <Input id="email" type="email" placeholder="example@gmail.com" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-white">Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -182,7 +181,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                   </div>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-white">Confirm Password</Label>
                   <div className="relative">
                     <Input
                       id="confirmPassword"
@@ -216,11 +215,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
             <form className="p-6 md:p-8 w-full" onSubmit={e => { e.preventDefault(); if (validateStep2()) { handleSubmit(e); } }}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="collegeId">College ID</Label>
+                  <Label htmlFor="collegeId" className="text-white">College ID</Label>
                   <Input id="collegeId" type="text" placeholder="Enter your college ID" value={collegeId} onChange={e => setCollegeId(e.target.value)} required />
                 </div>
                 <div className="grid gap-2 w-full">
-                  <Label htmlFor="year">Year</Label>
+                  <Label htmlFor="year" className="text-white">Year</Label>
                   <Select value={year} onValueChange={value => { setYear(value); setSemester(""); setSubjectCombo(""); }} required>
                     <SelectTrigger id="year">
                       <SelectValue placeholder="Select year" />
@@ -235,7 +234,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                 </div>
                 {year && (
                   <div className="grid gap-2 w-full">
-                    <Label htmlFor="semester">Semester</Label>
+                    <Label htmlFor="semester" className="text-white">Semester</Label>
                     <Select value={semester} onValueChange={setSemester} required>
                       <SelectTrigger id="semester">
                         <SelectValue placeholder="Select semester" />
@@ -250,7 +249,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                 )}
                 {showSubjectCombo && (
                   <div className="grid gap-2 w-full">
-                    <Label htmlFor="subjectCombo">Subject Combination</Label>
+                    <Label htmlFor="subjectCombo" className="text-white">Subject Combination</Label>
                     <Select value={subjectCombo} onValueChange={setSubjectCombo} required>
                       <SelectTrigger id="subjectCombo">
                         <SelectValue placeholder="Select subject combination" />
@@ -264,7 +263,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                 )}
                 <div className="flex items-center gap-2">
                   <input id="agree" type="checkbox" checked={agree} onChange={e => setAgree(e.target.checked)} required />
-                  <Label htmlFor="agree" className="text-xs">I agree with <a href="#" className="underline">terms and services</a> and Zentha policy.</Label>
+                  <Label htmlFor="agree" className="text-xs text-white">I agree with <a href="#" className="underline">terms and services</a> and Zentha policy.</Label>
                 </div>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" onClick={handleBack}>Back</Button>

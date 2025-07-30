@@ -1,0 +1,82 @@
+{
+  "subject": "Human Value",
+  "description": "RTU Human Value Previous Year Question Papers",
+  "papers": [
+    {
+      "id": 1,
+      "title": "RTU Human Value 2023-2024 Semester I",
+      "subject": "Human Value",
+      "semester": "1st Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-HUMAN-VALUE/2023-2024 SEM-I.pdf",
+      "size": "1.2MB",
+      "pages": 0
+    },
+    {
+      "id": 2,
+      "title": "RTU Human Value 2023-2024 Semester II",
+      "subject": "Human Value",
+      "semester": "2nd Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-HUMAN-VALUE/2023-2024 SEM-II.pdf",
+      "size": "94KB",
+      "pages": 1000
+    },
+    {
+      "id": 3,
+      "title": "RTU Human Value 2022-2023 Semester I",
+      "subject": "Human Value",
+      "semester": "1st Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-HUMAN-VALUE/2022-2023 SEM-I.pdf",
+      "size": "383KB",
+      "pages": 1510
+    },
+    {
+      "id": 4,
+      "title": "RTU Human Value 2022-2023 Semester II",
+      "subject": "Human Value",
+      "semester": "2nd Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-HUMAN-VALUE/2022-2023 SEM-II.pdf",
+      "size": "542KB",
+      "pages": 2983
+    },
+    {
+      "id": 5,
+      "title": "RTU Human Value 2021-2022 Semester I",
+      "subject": "Human Value",
+      "semester": "1st Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-HUMAN-VALUE/2021-2022 SEM-I.pdf",
+      "size": "78KB",
+      "pages": 358
+    },
+    {
+      "id": 6,
+      "title": "RTU Human Value 2021-2022 Semester II",
+      "subject": "Human Value",
+      "semester": "2nd Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-HUMAN-VALUE/2021-2022 SEM-II.pdf",
+      "size": "1012KB",
+      "pages": 4825
+    }
+  ],
+  "totalPapers": 6,
+  "years": ["2023-2024", "2022-2023", "2021-2022"],
+  "semesters": ["1st Semester", "2nd Semester"],
+  "lastUpdated": "2024-01-01"
+}

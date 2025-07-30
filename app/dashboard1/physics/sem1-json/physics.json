@@ -1,0 +1,82 @@
+{
+  "subject": "Physics",
+  "description": "RTU Physics Previous Year Question Papers",
+  "papers": [
+    {
+      "id": 1,
+      "title": "RTU Physics 2023-2024 Semester I",
+      "subject": "Physics",
+      "semester": "1st Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-PHYSICS/2023-2024 SEM-I.pdf",
+      "size": "1.7MB",
+      "pages": 0
+    },
+    {
+      "id": 2,
+      "title": "RTU Physics 2023-2024 Semester II",
+      "subject": "Physics",
+      "semester": "2nd Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-PHYSICS/2023-2024 SEM-II.pdf",
+      "size": "131KB",
+      "pages": 1463
+    },
+    {
+      "id": 3,
+      "title": "RTU Physics 2022-2023 Semester I",
+      "subject": "Physics",
+      "semester": "1st Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-PHYSICS/2022-2023 SEM-I.pdf",
+      "size": "590KB",
+      "pages": 2358
+    },
+    {
+      "id": 4,
+      "title": "RTU Physics 2022-2023 Semester II",
+      "subject": "Physics",
+      "semester": "2nd Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-PHYSICS/2022-2023 SEM-II.pdf",
+      "size": "574KB",
+      "pages": 2390
+    },
+    {
+      "id": 5,
+      "title": "RTU Physics 2021-2022 Semester I",
+      "subject": "Physics",
+      "semester": "1st Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-I.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-PHYSICS/2021-2022 SEM-I.pdf",
+      "size": "135KB",
+      "pages": 559
+    },
+    {
+      "id": 6,
+      "title": "RTU Physics 2021-2022 Semester II",
+      "subject": "Physics",
+      "semester": "2nd Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-II.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU-PHYSICS/2021-2022 SEM-II.pdf",
+      "size": "1.1MB",
+      "pages": 0
+    }
+  ],
+  "totalPapers": 6,
+  "years": ["2023-2024", "2022-2023", "2021-2022"],
+  "semesters": ["1st Semester", "2nd Semester"],
+  "lastUpdated": "2024-01-01"
+}

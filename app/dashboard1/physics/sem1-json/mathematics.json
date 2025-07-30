@@ -1,0 +1,46 @@
+{
+  "subject": "Mathematics",
+  "description": "RTU Mathematics Previous Year Question Papers",
+  "papers": [
+    {
+      "id": 1,
+      "title": "RTU Mathematics 2023-2024",
+      "subject": "Mathematics",
+      "semester": "Combined",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU MATHAMATICS /2023-2024.pdf",
+      "size": "346KB",
+      "pages": 1483
+    },
+    {
+      "id": 2,
+      "title": "RTU Mathematics 2022-2023",
+      "subject": "Mathematics",
+      "semester": "Combined",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU MATHAMATICS /2022-2023.pdf",
+      "size": "484KB",
+      "pages": 1972
+    },
+    {
+      "id": 3,
+      "title": "RTU Mathematics 2021-2022",
+      "subject": "Mathematics",
+      "semester": "Combined",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022.pdf",
+      "filepath": "/1st-year/physics/PYQ/RTU MATHAMATICS /2021-2022.pdf",
+      "size": "107KB",
+      "pages": 442
+    }
+  ],
+  "totalPapers": 3,
+  "years": ["2023-2024", "2022-2023", "2021-2022"],
+  "semesters": ["Combined"],
+  "lastUpdated": "2024-01-01"
+} 

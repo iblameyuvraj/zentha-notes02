@@ -1,0 +1,82 @@
+{
+  "subject": "Chemistry",
+  "description": "RTU Chemistry Previous Year Question Papers",
+  "papers": [
+    {
+      "id": 1,
+      "title": "RTU Chemistry 2023-2024 Semester I",
+      "subject": "Chemistry",
+      "semester": "1st Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-I.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU CHEMISTRY/2023-2024 SEM-I.pdf",
+      "size": "2.9MB",
+      "pages": 0
+    },
+    {
+      "id": 2,
+      "title": "RTU Chemistry 2023-2024 Semester II",
+      "subject": "Chemistry",
+      "semester": "2nd Semester",
+      "year": "2023-2024",
+      "type": "Previous Year",
+      "filename": "2023-2024 SEM-II.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU CHEMISTRY/2023-2024 SEM-II.pdf",
+      "size": "193KB",
+      "pages": 2538
+    },
+    {
+      "id": 3,
+      "title": "RTU Chemistry 2022-2023 Semester I",
+      "subject": "Chemistry",
+      "semester": "1st Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-I.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU CHEMISTRY/2022-2023 SEM-I.pdf",
+      "size": "434KB",
+      "pages": 1786
+    },
+    {
+      "id": 4,
+      "title": "RTU Chemistry 2022-2023 Semester II",
+      "subject": "Chemistry",
+      "semester": "2nd Semester",
+      "year": "2022-2023",
+      "type": "Previous Year",
+      "filename": "2022-2023 SEM-II.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU CHEMISTRY/2022-2023 SEM-II.pdf",
+      "size": "426KB",
+      "pages": 1774
+    },
+    {
+      "id": 5,
+      "title": "RTU Chemistry 2021-2022 Semester I",
+      "subject": "Chemistry",
+      "semester": "1st Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-I.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU CHEMISTRY/2021-2022 SEM-I.pdf",
+      "size": "110KB",
+      "pages": 498
+    },
+    {
+      "id": 6,
+      "title": "RTU Chemistry 2021-2022 Semester II",
+      "subject": "Chemistry",
+      "semester": "2nd Semester",
+      "year": "2021-2022",
+      "type": "Previous Year",
+      "filename": "2021-2022 SEM-II.pdf",
+      "filepath": "/1st-year/chemistry/PYQ/RTU CHEMISTRY/2021-2022 SEM-II.pdf",
+      "size": "1.6MB",
+      "pages": 0
+    }
+  ],
+  "totalPapers": 6,
+  "years": ["2023-2024", "2022-2023", "2021-2022"],
+  "semesters": ["1st Semester", "2nd Semester"],
+  "lastUpdated": "2024-01-01"
+}

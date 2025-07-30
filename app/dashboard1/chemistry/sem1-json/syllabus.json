@@ -1,0 +1,22 @@
+{
+  "subject": "Chemistry Syllabus",
+  "description": "RTU 1st Year Chemistry Syllabus and Course Materials",
+  "papers": [
+    {
+      "id": 1,
+      "title": "1st Year Syllabus",
+      "subject": "Syllabus",
+      "semester": "All Semesters",
+      "year": "2024-2025",
+      "type": "Syllabus",
+      "filename": "1st year syllabus.pdf",
+      "filepath": "/1st-year/syllabus/1st year syllabus.pdf",
+      "size": "373KB",
+      "pages": 1658
+    }
+  ],
+  "totalPapers": 1,
+  "years": ["2024-2025"],
+  "semesters": ["All Semesters"],
+  "lastUpdated": "2024-01-01"
+} 
