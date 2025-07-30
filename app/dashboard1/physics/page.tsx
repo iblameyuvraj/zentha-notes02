@@ -311,7 +311,7 @@ const rtuPapers = [
 // end of database call for nots 
 
 
-export function StudentDashboard() {
+export default function StudentDashboard() {
   const [subjectFilter, setSubjectFilter] = useState("all")
   const [semesterFilter, setSemesterFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
@@ -607,5 +607,3 @@ export function StudentDashboard() {
     </div>
   )
 }
-
-export default StudentDashboard;
