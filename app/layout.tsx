@@ -3,6 +3,7 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { Analytics } from '@vercel/analytics/react'
 
 // SEO Metadata Configuration
 export const metadata: Metadata = {
@@ -214,6 +215,7 @@ html {
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   )
