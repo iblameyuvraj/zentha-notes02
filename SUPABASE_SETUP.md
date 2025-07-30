@@ -3,7 +3,7 @@
 ## Database Schema
 
 You need to create a `profiles` table in your Supabase database with the following schema:
-
+--------
 ```sql
 -- Create profiles table
 CREATE TABLE profiles (
