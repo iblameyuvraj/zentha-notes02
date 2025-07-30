@@ -188,6 +188,12 @@ export default function RootLayout({
         {/* DNS prefetch for performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+        {/* Open Graph Image */}
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Zentha Notes - Educational Platform" />
         
         {/* Structured Data */}
         <script
