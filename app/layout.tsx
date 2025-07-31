@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     description: 'Zentha Notes provides premium study materials, past year question papers, and comprehensive educational resources for engineering students.',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Zentha Notes - Educational Platform',
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Zentha Notes - Premium Study Materials & Educational Resources',
     description: 'Zentha Notes provides premium study materials, past year question papers, and comprehensive educational resources for engineering students.',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.png'],
     creator: '@zentha_studio',
     site: '@zentha_studio',
   },

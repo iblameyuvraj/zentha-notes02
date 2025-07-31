@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { getRedirectPath } from "@/lib/redirect-utils"
@@ -19,6 +19,15 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const { signIn, profile } = useAuth()
+
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (profile && !loading) {
+      const redirectPath = getRedirectPath(profile)
+      console.log('Redirecting to:', redirectPath)
+      router.push(redirectPath)
+    }
+  }, [profile, loading, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,22 +55,10 @@ export default function LoginPage() {
         return
       }
       
+      // Login successful - profile will be fetched by AuthContext
+      // and useEffect will handle redirect
       setLoading(false)
       setSuccess(true)
-      
-      // Show success message for 2 seconds then redirect
-      setTimeout(() => {
-        // Force redirect based on user data from auth context
-        if (profile) {
-          console.log('Profile data for redirect:', profile)
-          const redirectPath = getRedirectPath(profile)
-          console.log('Redirecting to:', redirectPath)
-          router.push(redirectPath)
-        } else {
-          console.log('No profile data, redirecting to default')
-          router.push('/dashboard1/physics')
-        }
-      }, 2000)
     } catch (error) {
       console.error('Login error:', error)
       setError("An unexpected error occurred")
@@ -190,6 +187,7 @@ export default function LoginPage() {
                   onChange={e => setEmail(e.target.value)} 
                   className="h-12 border-gray-800 bg-black text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
                   required 
+                  disabled={loading}
                 />
               </div>
               
@@ -204,11 +202,13 @@ export default function LoginPage() {
                     onChange={e => setPassword(e.target.value)} 
                     className="h-12 border-gray-800 bg-gray-900 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 pr-10"
                     required 
+                    disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white disabled:opacity-50"
+                    disabled={loading}
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5 transition-all duration-200 hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
