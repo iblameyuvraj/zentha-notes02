@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     description: 'Zentha Notes provides premium study materials, past year question papers, and comprehensive educational resources for engineering students.',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpeg',
         width: 1200,
         height: 630,
         alt: 'Zentha Notes - Educational Platform',
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Zentha Notes - Premium Study Materials & Educational Resources',
     description: 'Zentha Notes provides premium study materials, past year question papers, and comprehensive educational resources for engineering students.',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpeg'],
     creator: '@zentha_studio',
     site: '@zentha_studio',
   },
@@ -193,15 +193,15 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
         {/* Open Graph Image */}
-        <meta property="og:image" content="https://notes.zentha.in/og-image.png" />
+        <meta property="og:image" content="https://notes.zentha.in/og-image.jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="Zentha Notes - Educational Platform" />
         <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:secure_url" content="https://notes.zentha.in/og-image.png" />
+        <meta property="og:image:secure_url" content="https://notes.zentha.in/og-image.jpeg" />
         
         {/* Twitter Card Image */}
-        <meta name="twitter:image" content="https://notes.zentha.in/og-image.png" />
+        <meta name="twitter:image" content="https://notes.zentha.in/og-image.jpeg" />
         <meta name="twitter:image:alt" content="Zentha Notes - Educational Platform" />
         
         {/* Structured Data */}

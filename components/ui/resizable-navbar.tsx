@@ -197,8 +197,12 @@ export const MobileNavToggle = ({
 export const NavbarLogo = () => {
   return (
     <a href="#" className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-neutral-100 dark:text-neutral-100">
-      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-        <span className="text-white font-bold text-lg">Z</span>
+      <div>
+        <img
+          src="/og-image.jpeg"
+          alt="Zentha Notes Logo"
+          className="w-10 h-10 object-contain rounded"
+        />
       </div>
       <span className="font-medium text-neutral-100 dark:text-neutral-100">Zentha Notes</span>
     </a>

@@ -1,47 +1,188 @@
-import { FloatingDock } from "@/components/ui/floating-dock"
 import {
   IconBrandGithub,
   IconBrandTwitter,
-  IconHome,
   IconMail,
   IconBook,
-  IconHelp,
-  IconSettings,
   IconBrandInstagram,
+  IconBrandLinkedin,
+  IconBrandFacebook,
+  IconMapPin,
+  IconBrandYoutube,
+  IconCoffee,
 } from "@tabler/icons-react"
+import { Button } from "./ui/button"
 
-export default function FloatingDockDemo() {
-  const links = [
-    {
-      title: "Home",
-      icon: <IconHome className="h-6 w-6 text-white" />,
-      href: "#",
-    },
-    {
-      title: "How to Use",
-      icon: <IconHelp className="h-6 w-6 text-white" />,
-      href: "#how-to-use",
-    },
-    {
-      title: "Features",
-      icon: <IconBook className="h-6 w-6 text-white" />,
-      href: "#features",
-    },
-    {
-      title: "Contact",
-      icon: <IconMail className="h-6 w-6 text-white" />,
-      href: "#contact",
-    },
-    {
-      title: "Instagram",
-      icon: <IconBrandInstagram className="h-6 w-6 text-white" />,
-      href: "https://instagram.com/",
-    },
+export default function FooterDemo() {
+  const currentYear = new Date().getFullYear()
+
+  const footerLinks = {
+    company: [
+      { name: "About Us", href: "#" },
+      { name: "Our Mission", href: "#" },
+      { name: "Careers", href: "#" },
+      { name: "Press", href: "#" },
+    ],
+    resources: [
+      { name: "Documentation", href: "#" },
+      { name: "Help Center", href: "#" },
+      { name: "Blog", href: "#" },
+      { name: "Tutorials", href: "#" },
+    ],
+    legal: [
+      { name: "Privacy Policy", href: "#" },
+      { name: "Terms of Service", href: "#" },
+      { name: "Cookie Policy", href: "#" },
+      { name: "GDPR", href: "#" },
+    ],
+    support: [
+      { name: "Contact Us", href: "#" },
+      { name: "FAQ", href: "#" },
+      { name: "Live Chat", href: "#" },
+      { name: "Support Ticket", href: "#" },
+    ],
+  }
+
+  const socialLinks = [
+    { name: "Facebook", icon: <IconBrandFacebook className="h-5 w-5" />, href: "#" },
+    { name: "Twitter", icon: <IconBrandTwitter className="h-5 w-5" />, href: "#" },
+    { name: "Instagram", icon: <IconBrandInstagram className="h-5 w-5" />, href: "#" },
+    { name: "LinkedIn", icon: <IconBrandLinkedin className="h-5 w-5" />, href: "#" },
+    { name: "YouTube", icon: <IconBrandYoutube className="h-5 w-5" />, href: "#" },
+    { name: "GitHub", icon: <IconBrandGithub className="h-5 w-5" />, href: "#" },
   ]
 
   return (
-    <div className="flex items-center justify-center h-[10rem] w-full">
-      <FloatingDock mobileClassName="translate-y-20" items={links} />
-    </div>
+    <footer className="bg-black text-white">
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Company Info */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <IconBook className="h-5 w-5 text-black" />
+              </div>
+              <span className="text-xl font-bold">Zentha Notes</span>
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Your comprehensive platform for educational resources, study materials, and academic excellence.
+            </p>
+            <div className="space-y-2">
+
+              <div className="flex items-center space-x-3 text-sm text-gray-400">
+                <IconMail className="h-4 w-4" />
+                <span>hi@zentha.in</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-400">
+                <IconMapPin className="h-4 w-4" />
+                <span>based in jaipur, india</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Company Links */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">Company</h3>
+            <ul className="space-y-2">
+              {footerLinks.company.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources Links */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">Resources</h3>
+            <ul className="space-y-2">
+              {footerLinks.resources.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Support Links */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">Support</h3>
+            <ul className="space-y-2">
+              {footerLinks.support.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Social Media & Newsletter */}
+        {/* Social Media Section */}
+        <div className="mt-16 pt-12 border-t border-gray-800">
+          <div className="flex flex-col items-center justify-center space-y-8">
+            {/* Section Title */}
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-semibold text-white">Connect with us</h3>
+              <p className="text-gray-400 text-sm">Follow us on social media for updates and news</p>
+            </div>
+            
+            {/* Social Media Icons */}
+            <div className="flex flex-wrap justify-center gap-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  className="group w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  aria-label={social.name}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className="text-gray-400 group-hover:text-white transition-colors duration-300">
+                    {social.icon}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Buy us a coffee */}
+        {/* Buy us a Coffee Section */}
+        <div className="flex items-center justify-start">
+          <a 
+            href="https://buymeacoffee.com/zenthastudio" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group"
+          >
+            <Button 
+              size="sm"
+              className="bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-600 hover:from-neutral-700 hover:via-neutral-600 hover:to-neutral-500 text-neutral-100 border border-neutral-600/50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+            >
+              <IconCoffee className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-300 text-neutral-200" />
+              Buy us a coffee
+            </Button>
+          </a>
+        </div>
+        {/* Bottom Divider */}
+        <div className="w-full border-t border-gray-800 mt-12"></div>
+      </div>
+    </footer>
   )
 }
