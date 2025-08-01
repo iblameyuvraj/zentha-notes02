@@ -35,18 +35,22 @@ export default function LoginPage() {
     setLoading(true)
     
     try {
+      console.log('Attempting login for:', email)
       const { error } = await signIn(email, password)
       
       if (error) {
         console.log('Login error:', error)
         
-        // Handle different error cases
+        // Handle different error cases with better messaging for concurrent sessions
         if (error.message?.includes('Email not confirmed') || 
             error.message?.includes('Email not verified') ||
             error.message?.includes('Invalid login credentials') && error.message?.includes('email')) {
           setError("Please check your email and verify your account before logging in")
         } else if (error.message?.includes('Invalid login credentials')) {
           setError("Email or Password is incorrect")
+        } else if (error.message?.includes('User already registered') || 
+                   error.message?.includes('already exists')) {
+          setError("This account is already logged in on another device. You can continue using this session.")
         } else {
           setError(error.message || "An error occurred during login")
         }
@@ -61,7 +65,7 @@ export default function LoginPage() {
       setSuccess(true)
     } catch (error) {
       console.error('Login error:', error)
-      setError("An unexpected error occurred")
+      setError("An unexpected error occurred. Please try again.")
       setLoading(false)
     }
   }

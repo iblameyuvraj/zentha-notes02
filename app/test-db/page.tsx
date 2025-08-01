@@ -1,71 +1,73 @@
 "use client"
 
-import { useState } from 'react'
-import { testDatabaseConnection } from '@/lib/test-db'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from "@/contexts/AuthContext"
+import { sessionUtils } from "@/lib/supabase"
+import { useState } from "react"
 
 export default function TestDBPage() {
-  const [result, setResult] = useState<string>('')
-  const [loading, setLoading] = useState(false)
+  const { user, profile, signOut } = useAuth()
+  const [sessionInfo, setSessionInfo] = useState<any>(null)
 
-  const testConnection = async () => {
-    setLoading(true)
-    setResult('Testing...')
-    
-    try {
-      const testResult = await testDatabaseConnection()
-      setResult(JSON.stringify(testResult, null, 2))
-    } catch (error) {
-      setResult(`Error: ${error}`)
-    } finally {
-      setLoading(false)
-    }
+  const testSession = async () => {
+    const session = await sessionUtils.getCurrentSession()
+    setSessionInfo(session)
   }
 
-  const testAuth = async () => {
-    setLoading(true)
-    setResult('Testing auth...')
-    
-    try {
-      const { data, error } = await supabase.auth.getSession()
-      setResult(JSON.stringify({ data, error }, null, 2))
-    } catch (error) {
-      setResult(`Auth Error: ${error}`)
-    } finally {
-      setLoading(false)
-    }
+  const testMultiSession = async () => {
+    const isLoggedInElsewhere = await sessionUtils.isLoggedInElsewhere()
+    console.log('Is logged in elsewhere:', isLoggedInElsewhere)
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Database Test Page</h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-4">Test Database & Session</h1>
       
       <div className="space-y-4">
-        <button 
-          onClick={testConnection}
-          disabled={loading}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          Test Database Connection
-        </button>
-        
-        <button 
-          onClick={testAuth}
-          disabled={loading}
-          className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50 ml-2"
-        >
-          Test Auth
-        </button>
-      </div>
-      
-      {result && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">Result:</h2>
-          <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
-            {result}
+        <div className="p-4 border rounded">
+          <h2 className="text-lg font-semibold mb-2">Current User</h2>
+          <pre className="bg-gray-100 p-2 rounded text-sm">
+            {JSON.stringify(user, null, 2)}
           </pre>
         </div>
-      )}
+
+        <div className="p-4 border rounded">
+          <h2 className="text-lg font-semibold mb-2">Current Profile</h2>
+          <pre className="bg-gray-100 p-2 rounded text-sm">
+            {JSON.stringify(profile, null, 2)}
+          </pre>
+        </div>
+
+        <div className="p-4 border rounded">
+          <h2 className="text-lg font-semibold mb-2">Session Info</h2>
+          <button 
+            onClick={testSession}
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            Test Session
+          </button>
+          <button 
+            onClick={testMultiSession}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Test Multi-Session
+          </button>
+          {sessionInfo && (
+            <pre className="bg-gray-100 p-2 rounded text-sm mt-2">
+              {JSON.stringify(sessionInfo, null, 2)}
+            </pre>
+          )}
+        </div>
+
+        <div className="p-4 border rounded">
+          <h2 className="text-lg font-semibold mb-2">Actions</h2>
+          <button 
+            onClick={signOut}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
     </div>
   )
 } 

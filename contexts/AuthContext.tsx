@@ -26,32 +26,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get initial session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        await fetchProfile(session.user.id)
-      }
-      setLoading(false)
-    }
-
-    getSession()
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('Error getting session:', error)
+          setLoading(false)
+          return
+        }
+        
         setUser(session?.user ?? null)
         
         if (session?.user) {
           await fetchProfile(session.user.id)
-        } else {
-          setProfile(null)
         }
         setLoading(false)
+      } catch (error) {
+        console.error('Error in getSession:', error)
+        setLoading(false)
+      }
+    }
+
+    getSession()
+
+    // Listen for auth changes with better error handling
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.id)
+        
+        try {
+          setUser(session?.user ?? null)
+          
+          if (session?.user) {
+            await fetchProfile(session.user.id)
+          } else {
+            setProfile(null)
+          }
+          setLoading(false)
+        } catch (error) {
+          console.error('Error in auth state change:', error)
+          setLoading(false)
+        }
       }
     )
 
-    return () => subscription.unsubscribe()
+    // Listen for storage changes across tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key?.includes('supabase') || e.key?.includes('auth')) {
+        console.log('Storage change detected, refreshing session')
+        getSession()
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange)
+    }
+
+    return () => {
+      subscription.unsubscribe()
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('storage', handleStorageChange)
+      }
+    }
   }, [])
 
   const fetchProfile = async (userId: string) => {
@@ -111,31 +147,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('Attempting sign in for:', email)
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
 
       if (error) {
+        console.error('Sign in error:', error)
         return { error }
       }
 
       if (data.user) {
-        console.log('User signed in, fetching profile for:', data.user.id)
+        console.log('User signed in successfully:', data.user.id)
         await fetchProfile(data.user.id)
       }
 
       return { error: null }
     } catch (error) {
+      console.error('Sign in error:', error)
       return { error }
     }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    setProfile(null)
-    router.push('/login')
+    try {
+      console.log('Signing out user')
+      await supabase.auth.signOut()
+      setUser(null)
+      setProfile(null)
+      router.push('/login')
+    } catch (error) {
+      console.error('Sign out error:', error)
+    }
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {

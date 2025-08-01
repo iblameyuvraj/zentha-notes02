@@ -111,7 +111,7 @@ export function Settings() {
                 <Input id="subjectCombination" value={userData.subjectCombination} readOnly className="mt-1 bg-gray-700 border-gray-600 text-white cursor-not-allowed" />
               </div>
             )}
-            <p className="text-sm text-gray-400 mt-1">Contact admin to change your info. <br /> <a href="mailto:hi@yuvraj.site" className="text-blue-400 hover:text-blue-300">hi@yuvraj.site</a></p>
+            <p className="text-sm text-gray-400 mt-1">Contact admin to change your info. <br /> <a href="mailto:hi@zentha.in" className="text-blue-400 hover:text-blue-300">hi@zentha.in</a></p>
           </CardContent>
         </Card>
         {/* App Preferences */}
@@ -193,11 +193,11 @@ export function Settings() {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button onClick={confirmLogout} variant="outline" className="border-gray-600 text-white hover:bg-gray-700">
+                  <Button onClick={confirmLogout} variant="outline" className="border-gray-600 text-black hover:bg-gray-700">
                     Logout
                   </Button>
                   <DialogClose asChild>
-                    <Button variant="outline" className="border-gray-600 text-white hover:bg-gray-700">Cancel</Button>
+                    <Button variant="outline" className="border-gray-600 text-black hover:bg-gray-700">Cancel</Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>
@@ -222,7 +222,7 @@ export function Settings() {
                     {deleting ? "Deleting..." : "Delete"}
                   </Button>
                   <DialogClose asChild>
-                    <Button variant="outline" className="border-gray-600 text-white hover:bg-gray-700">Cancel</Button>
+                    <Button variant="outline" className="border-gray-600 text-black hover:bg-gray-700">Cancel</Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>
