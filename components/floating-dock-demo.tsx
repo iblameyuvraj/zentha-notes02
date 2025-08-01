@@ -29,10 +29,10 @@ export default function FooterDemo() {
       { name: "Tutorials", href: "#" },
     ],
     legal: [
-      { name: "Privacy Policy", href: "#" },
-      { name: "Terms of Service", href: "#" },
+      { name: "Privacy Policy", href: "/policies/privacy-policy" },
+      { name: "Terms of Service", href: "/policies/terms-and-conditions" },
+      { name: "Refund Policy", href: "/policies/refund-cancellation" },
       { name: "Cookie Policy", href: "#" },
-      { name: "GDPR", href: "#" },
     ],
     support: [
       { name: "Contact Us", href: "#" },
