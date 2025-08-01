@@ -2,13 +2,13 @@
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/contexts/AuthContext"
 
-export default function TeacherLogin() {
+function TeacherLoginContent() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -225,5 +225,17 @@ export default function TeacherLogin() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function TeacherLogin() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen bg-black items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    }>
+      <TeacherLoginContent />
+    </Suspense>
   )
 }
