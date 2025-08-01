@@ -180,20 +180,29 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
         {/* Favicon and app icons */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/FaviconImages/favicon.ico" sizes="any" />
+        <link rel="icon" href="/FaviconImages/favicon-16x16.png" sizes="16x16" type="image/png" />
+        <link rel="icon" href="/FaviconImages/favicon-32x32.png" sizes="32x32" type="image/png" />
+        <link rel="apple-touch-icon" href="/FaviconImages/apple-touch-icon.png" />
+        <link rel="icon" href="/FaviconImages/android-chrome-192x192.png" sizes="192x192" type="image/png" />
+        <link rel="icon" href="/FaviconImages/android-chrome-512x512.png" sizes="512x512" type="image/png" />
+        <link rel="manifest" href="/FaviconImages/site.webmanifest" />
         
         {/* DNS prefetch for performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
         {/* Open Graph Image */}
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content="https://notes.zentha.in/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="Zentha Notes - Educational Platform" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:secure_url" content="https://notes.zentha.in/og-image.png" />
+        
+        {/* Twitter Card Image */}
+        <meta name="twitter:image" content="https://notes.zentha.in/og-image.png" />
+        <meta name="twitter:image:alt" content="Zentha Notes - Educational Platform" />
         
         {/* Structured Data */}
         <script
