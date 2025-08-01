@@ -130,54 +130,7 @@ export function Settings() {
               </div>
               <Switch id="notifications" checked={notifications} onCheckedChange={setNotifications} />
             </div>
-            
-            {/* Buy us a Coffee Section */}
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-neutral-900 via-neutral-800 to-black border border-neutral-700/50 p-6 shadow-2xl">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.03),transparent_50%)]"></div>
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_30%,rgba(255,255,255,0.02)_50%,transparent_70%)]"></div>
-              
-              <div className="relative flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  {/* Coffee Icon Container */}
-                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-neutral-700 via-neutral-600 to-neutral-500 rounded-full shadow-lg border border-neutral-600/50">
-                    <Coffee className="w-6 h-6 text-neutral-200" />
-                  </div>
-                  
-                  {/* Text Content */}
-                  <div>
-                    <Label className="text-lg font-semibold text-neutral-100 flex items-center">
-                      Buy us a coffee
-                      <span className="ml-2 text-neutral-400">☕</span>
-                    </Label>
-                    <p className="text-sm text-neutral-400 mt-1">Support our development with a warm cup of coffee</p>
-                  </div>
-                </div>
-                
-                {/* Action Button */}
-                <a 
-                  href="https://buymeacoffee.com/zenthastudio" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group"
-                >
-                  <Button 
-                    className="bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-600 hover:from-neutral-700 hover:via-neutral-600 hover:to-neutral-500 text-neutral-100 border border-neutral-600/50 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
-                  >
-                    <Coffee className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-300 text-neutral-200" />
-                    Support Us
-                  </Button>
-                </a>
-              </div>
-              
-              {/* Decorative Elements */}
-              <div className="absolute top-2 right-2 text-neutral-700/30 text-2xl">☕</div>
-              <div className="absolute bottom-2 left-2 text-neutral-700/30 text-xl">☕</div>
-              
-              {/* Premium Accent Lines */}
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-neutral-600/50 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-neutral-600/50 to-transparent"></div>
-            </div>
+          
           </CardContent>
         </Card>
         {/* Account Metadata */}

@@ -40,7 +40,6 @@ export default function NavbarDemo() {
           <div className="flex items-center gap-4">
             <NavbarButton href="/login" variant="secondary">Login</NavbarButton>
             <NavbarButton href="/signup" variant="primary">Sign up</NavbarButton>
-            <NavbarButton href="https://buymeacoffee.com/zenthastudio" variant="primary">Buy us a coffee</NavbarButton>
           </div>
         </NavBody>
 
@@ -84,14 +83,6 @@ export default function NavbarDemo() {
                 className="w-full"
               >
                 Sign up
-              </NavbarButton>
-              <NavbarButton
-                href="https://buymeacoffee.com/zenthastudio"
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Buy us a coffee
               </NavbarButton>
             </div>
           </MobileNavMenu>

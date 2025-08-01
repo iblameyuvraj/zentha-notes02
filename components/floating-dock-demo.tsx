@@ -162,24 +162,6 @@ export default function FooterDemo() {
           </div>
         </div>
 
-        {/* Buy us a coffee */}
-        {/* Buy us a Coffee Section */}
-        <div className="flex items-center justify-start">
-          <a 
-            href="https://buymeacoffee.com/zenthastudio" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="group"
-          >
-            <Button 
-              size="sm"
-              className="bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-600 hover:from-neutral-700 hover:via-neutral-600 hover:to-neutral-500 text-neutral-100 border border-neutral-600/50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
-            >
-              <IconCoffee className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-300 text-neutral-200" />
-              Buy us a coffee
-            </Button>
-          </a>
-        </div>
         {/* Bottom Divider */}
         <div className="w-full border-t border-gray-800 mt-12"></div>
       </div>
