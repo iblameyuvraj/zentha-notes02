@@ -41,6 +41,8 @@ After creating the bucket, go to **Storage > Policies** and add the following po
 (auth.role() = 'authenticated')
 ```
 
+
+
 #### Policy 2: Allow users to view their own uploads
 ```sql
 -- Name: "Allow users to view their own uploads"
@@ -50,6 +52,8 @@ After creating the bucket, go to **Storage > Policies** and add the following po
 (auth.role() = 'authenticated')
 ```
 
+
+
 #### Policy 3: Allow users to update their own uploads
 ```sql
 -- Name: "Allow users to update their own uploads"
@@ -58,6 +62,8 @@ After creating the bucket, go to **Storage > Policies** and add the following po
 -- Policy definition:
 (auth.role() = 'authenticated')
 ```
+
+
 
 #### Policy 4: Allow users to delete their own uploads
 ```sql

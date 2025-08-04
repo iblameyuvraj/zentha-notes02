@@ -123,7 +123,8 @@ export async function saveUploadRecord(data: UploadData, uploadResult: UploadRes
         download_url: uploadResult.downloadUrl,
         file_size: data.file.size,
         file_name: data.file.name,
-        uploaded_by: (await supabase.auth.getUser()).data.user?.id
+        uploaded_by: (await supabase.auth.getUser()).data.user?.id,
+        status: 'Approved'
       })
     
     if (error) {
@@ -190,10 +191,8 @@ export async function deleteUpload(uploadId: string, teacherId: string) {
       return { success: false, error: 'You can only delete your own uploads' }
     }
     
-    // Check if upload can be deleted (only pending uploads or if admin allows)
-    if (upload.status === 'Approved') {
-      return { success: false, error: 'Approved uploads cannot be deleted' }
-    }
+    // Teachers can delete their own uploads
+    // No approval restrictions since everything is auto-approved
     
     // Delete the file from storage if it exists
     if (upload.file_path) {

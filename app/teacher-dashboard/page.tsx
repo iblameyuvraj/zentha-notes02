@@ -638,22 +638,23 @@ export default function TeacherDashboard() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-gray-800 border-gray-700">
-                  <DropdownMenuItem className="text-white hover:bg-gray-700 cursor-default">
-                    <User className="mr-2 h-4 w-4" />
-                    <div className="flex flex-col">
-                      <span className="font-medium">{profile?.full_name || user?.user_metadata?.full_name || "User"}</span>
-                      <span className="text-sm text-gray-400">{user?.email}</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={signOut}
-                    className="text-red-400 hover:text-red-300 hover:bg-gray-700"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign Out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
+                              <DropdownMenuContent align="end" className="w-56 bg-gray-800 border-gray-700">
+                <DropdownMenuItem className="text-white hover:bg-gray-700 cursor-default">
+                  <User className="mr-2 h-4 w-4" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">{profile?.full_name || user?.user_metadata?.full_name || "User"}</span>
+                    <span className="text-sm text-gray-400">{user?.email}</span>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem 
+                  onClick={signOut}
+                  className="text-red-400 hover:text-red-300 hover:bg-gray-700"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </div>
@@ -880,15 +881,9 @@ export default function TeacherDashboard() {
                             <Calendar className="w-4 h-4 mr-1" />
                             {new Date(upload.created_at).toLocaleDateString()}
                           </span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(upload.status)}`}>
-                            {upload.status}
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            Approved
                           </span>
-                          {upload.status === 'Approved' && (
-                            <span className="flex items-center text-xs text-yellow-400">
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                              Cannot delete
-                            </span>
-                          )}
                         </div>
                         <div className="text-xs text-gray-500 space-y-1">
                           <p>Year: {upload.year} • Subject: {upload.subject} • Type: {upload.type}</p>
@@ -912,8 +907,8 @@ export default function TeacherDashboard() {
                           size="sm" 
                           className="text-red-400 hover:text-red-300 border-gray-600 hover:bg-black"
                           onClick={() => handleDeleteClick(upload.id)}
-                          disabled={deletingUploads.has(upload.id) || upload.status === 'Approved'}
-                          title={upload.status === 'Approved' ? 'Approved uploads cannot be deleted' : 'Delete upload'}
+                          disabled={deletingUploads.has(upload.id)}
+                          title="Delete upload"
                         >
                           {deletingUploads.has(upload.id) ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

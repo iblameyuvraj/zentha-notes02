@@ -62,7 +62,7 @@ export default function NavbarDemo() {
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-neutral-600 dark:text-neutral-300"
+                className="relative text-white"
               >
                 <span className="block">{item.name}</span>
               </a>
@@ -72,7 +72,7 @@ export default function NavbarDemo() {
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="primary"
-                className="w-full"
+                className="w-full text-white"
               >
                 Login
               </NavbarButton>
@@ -80,7 +80,7 @@ export default function NavbarDemo() {
                 href="/signup"
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="primary"
-                className="w-full"
+                className="w-full text-white"
               >
                 Sign up
               </NavbarButton>

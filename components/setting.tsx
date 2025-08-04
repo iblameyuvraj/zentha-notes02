@@ -52,7 +52,7 @@ export function Settings() {
     setDeleting(true);
     try {
       // Delete user account from Supabase
-      const { error } = await supabase.auth.admin.deleteUser(user?.id || '');
+      const { error } = await supabase.auth.updateUser({ data: { deleted: true } });
       if (error) {
         console.error('Error deleting account:', error);
       }
@@ -111,7 +111,7 @@ export function Settings() {
                 <Input id="subjectCombination" value={userData.subjectCombination} readOnly className="mt-1 bg-gray-700 border-gray-600 text-white cursor-not-allowed" />
               </div>
             )}
-            <p className="text-sm text-gray-400 mt-1">Contact admin to change your info. <br /> <a href="mailto:hi@zentha.in" className="text-blue-400 hover:text-blue-300">hi@zentha.in</a></p>
+            <p className="text-sm text-gray-400 mt-1">Contact support to change your info. <br /> <a href="mailto:hi@zentha.in" className="text-blue-400 hover:text-blue-300">hi@zentha.in</a></p>
           </CardContent>
         </Card>
         {/* App Preferences */}

@@ -13,7 +13,7 @@ CREATE TABLE teacher_uploads (
   file_size BIGINT,
   file_name TEXT,
   uploaded_by UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  status TEXT DEFAULT 'Pending' CHECK (status IN ('Pending', 'Approved', 'Rejected')),
+  status TEXT DEFAULT 'Approved' CHECK (status IN ('Approved')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
