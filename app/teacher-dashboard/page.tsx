@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef } from "react"
-import { Upload, FileText, Trash2, Edit, Calendar } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { Upload, FileText, Trash2, Edit, Calendar, User, LogOut, Loader2, CheckCircle, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,6 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { useDropzone, FileRejection } from "react-dropzone"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/contexts/AuthContext"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { uploadFile, saveUploadRecord, getTeacherUploads, deleteUpload, type UploadData } from "@/lib/storage"
+import { useToast } from "@/hooks/use-toast"
 
 const mockUploads = [
   {
@@ -275,6 +280,98 @@ export default function TeacherDashboard() {
   })
 
   const [errors, setErrors] = useState<{[key: string]: string}>({})
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploads, setUploads] = useState<any[]>([])
+  const [loadingUploads, setLoadingUploads] = useState(true)
+  const [deletingUploads, setDeletingUploads] = useState<Set<string>>(new Set())
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [showLogoutReminder, setShowLogoutReminder] = useState(false)
+  const { toast } = useToast()
+
+  // Fetch teacher's uploads on component mount
+  useEffect(() => {
+    fetchTeacherUploads()
+  }, [])
+
+  const fetchTeacherUploads = async () => {
+    if (!user?.id) return
+    
+    setLoadingUploads(true)
+    const result = await getTeacherUploads(user.id)
+    if (result.success) {
+      setUploads(result.data)
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to load uploads: " + result.error,
+        variant: "destructive"
+      })
+    }
+    setLoadingUploads(false)
+  }
+
+  const handleDeleteUpload = async (uploadId: string) => {
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to delete uploads",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Add to deleting set to show loading state
+    setDeletingUploads(prev => new Set(prev).add(uploadId))
+
+    try {
+      const result = await deleteUpload(uploadId, user.id)
+      
+      if (result.success) {
+        toast({
+          title: "Upload Deleted",
+          description: "Your upload has been deleted successfully",
+        })
+        
+        // Remove from uploads list
+        setUploads(prev => prev.filter(upload => upload.id !== uploadId))
+      } else {
+        toast({
+          title: "Delete Failed",
+          description: result.error || "Failed to delete upload",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      toast({
+        title: "Delete Failed",
+        description: "An unexpected error occurred while deleting",
+        variant: "destructive"
+      })
+    } finally {
+      // Remove from deleting set
+      setDeletingUploads(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(uploadId)
+        return newSet
+      })
+    }
+  }
+
+  const handleDeleteClick = (uploadId: string) => {
+    setDeleteConfirmId(uploadId)
+  }
+
+  const confirmDelete = async () => {
+    if (deleteConfirmId) {
+      await handleDeleteUpload(deleteConfirmId)
+      setDeleteConfirmId(null)
+    }
+  }
+
+  const cancelDelete = () => {
+    setDeleteConfirmId(null)
+  }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -327,26 +424,99 @@ export default function TeacherDashboard() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!validateForm()) {
       return
     }
 
-    console.log("Form submitted:", formData)
-    // Reset form
-    setFormData({
-      title: "",
-      year: "",
-      semester: "",
-      subjectCombo: "",
-      subject: "",
-      type: "",
-      description: "",
-      file: null,
-    })
-    setErrors({})
+    if (!formData.file) {
+      toast({
+        title: "Error",
+        description: "Please select a file to upload",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      // Prepare upload data
+      const uploadData: UploadData = {
+        title: formData.title,
+        year: formData.year,
+        semester: formData.semester,
+        subjectCombo: formData.subjectCombo,
+        subject: formData.subject,
+        type: formData.type as 'Notes' | 'Assignment',
+        description: formData.description,
+        file: formData.file
+      }
+
+      // Upload file to storage
+      const uploadResult = await uploadFile(uploadData)
+      
+      if (!uploadResult.success) {
+        toast({
+          title: "Upload Failed",
+          description: uploadResult.error || "Failed to upload file",
+          variant: "destructive"
+        })
+        return
+      }
+
+      // Save upload record to database
+      const saveResult = await saveUploadRecord(uploadData, uploadResult)
+      
+      if (!saveResult.success) {
+        toast({
+          title: "Upload Failed",
+          description: "File uploaded but failed to save record: " + saveResult.error,
+          variant: "destructive"
+        })
+        return
+      }
+
+      // Success
+      toast({
+        title: "Upload Successful",
+        description: "Your file has been uploaded successfully",
+      })
+
+      // Show logout reminder
+      setShowLogoutReminder(true)
+      setTimeout(() => {
+        setShowLogoutReminder(false)
+      }, 7000) // Show for 3 seconds
+
+      // Reset form
+      setFormData({
+        title: "",
+        year: "",
+        semester: "",
+        subjectCombo: "",
+        subject: "",
+        type: "",
+        description: "",
+        file: null,
+      })
+      setErrors({})
+
+      // Refresh uploads list
+      await fetchTeacherUploads()
+
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast({
+        title: "Upload Failed",
+        description: "An unexpected error occurred during upload",
+        variant: "destructive"
+      })
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   const getStatusColor = (status: string) => {
@@ -434,12 +604,60 @@ export default function TeacherDashboard() {
     ]
   }
 
+  const { user, profile, signOut } = useAuth()
+
   return (
     <div className="min-h-screen bg-black text-white p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Teacher Upload Portal</h1>
-        <p className="text-gray-400">Upload and manage your educational materials</p>
+      {/* Header with User Info */}
+      <div className="mb-8 relative">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Teacher Upload Portal</h1>
+            <p className="text-gray-400">Upload and manage your educational materials</p>
+          </div>
+          
+          {/* User Info Display */}
+          <div>
+            <div className="flex items-center space-x-3">
+              <div className="text-right">
+                <p className="text-white font-medium">
+                  {profile?.full_name || user?.user_metadata?.full_name || user?.email || "Guest"}
+                </p>
+                <p className="text-gray-400 text-sm">
+                  {user?.email || "Not logged in"}
+                </p>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full bg-gray-800 hover:bg-gray-700">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.user_metadata?.avatar_url} alt={profile?.full_name || user?.email || "User"} />
+                      <AvatarFallback className="bg-blue-600 text-white">
+                        {(profile?.full_name || user?.email || "U").charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-gray-800 border-gray-700">
+                  <DropdownMenuItem className="text-white hover:bg-gray-700 cursor-default">
+                    <User className="mr-2 h-4 w-4" />
+                    <div className="flex flex-col">
+                      <span className="font-medium">{profile?.full_name || user?.user_metadata?.full_name || "User"}</span>
+                      <span className="text-sm text-gray-400">{user?.email}</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={signOut}
+                    className="text-red-400 hover:text-red-300 hover:bg-gray-700"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -605,9 +823,23 @@ export default function TeacherDashboard() {
                 {errors.file && <p className="text-red-400 text-sm mt-1">{errors.file}</p>}
               </div>
 
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" size="lg">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Document
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700" 
+                size="lg"
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload Document
+                  </>
+                )}
               </Button>
             </form>
           </CardContent>
@@ -622,40 +854,162 @@ export default function TeacherDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {mockUploads.map((upload) => (
-                <div
-                  key={upload.id}
-                  className="border border-gray-700 rounded-lg p-4 hover:bg-gray-800 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-white mb-1">{upload.title}</h3>
-                      <div className="flex items-center space-x-4 text-sm text-gray-400">
-                        <span className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {upload.dateUploaded}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(upload.status)}`}>
-                          {upload.status}
-                        </span>
+            {loadingUploads ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <span className="ml-2 text-gray-400">Loading uploads...</span>
+              </div>
+            ) : uploads.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-400">No uploads yet</p>
+                <p className="text-gray-500 text-sm">Your uploaded documents will appear here</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {uploads.map((upload) => (
+                  <div
+                    key={upload.id}
+                    className="border border-gray-700 rounded-lg p-4 hover:bg-gray-800 transition-colors"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-white mb-1">{upload.title}</h3>
+                        <div className="flex items-center space-x-4 text-sm text-gray-400 mb-2">
+                          <span className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {new Date(upload.created_at).toLocaleDateString()}
+                          </span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(upload.status)}`}>
+                            {upload.status}
+                          </span>
+                          {upload.status === 'Approved' && (
+                            <span className="flex items-center text-xs text-yellow-400">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Cannot delete
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500 space-y-1">
+                          <p>Year: {upload.year} • Subject: {upload.subject} • Type: {upload.type}</p>
+                          {upload.description && <p>Description: {upload.description}</p>}
+                          <p>File: {upload.file_name} ({(upload.file_size / 1024 / 1024).toFixed(2)} MB)</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2 ml-4">
+                        {upload.download_url && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-blue-400 hover:text-blue-300 border-gray-600 hover:bg-black"
+                            onClick={() => window.open(upload.download_url, '_blank')}
+                          >
+                            <FileText className="w-4 h-4" />
+                          </Button>
+                        )}
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-red-400 hover:text-red-300 border-gray-600 hover:bg-black"
+                          onClick={() => handleDeleteClick(upload.id)}
+                          disabled={deletingUploads.has(upload.id) || upload.status === 'Approved'}
+                          title={upload.status === 'Approved' ? 'Approved uploads cannot be deleted' : 'Delete upload'}
+                        >
+                          {deletingUploads.has(upload.id) ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 ml-4">
-                      <Button variant="outline" size="sm" className="text-red-400  hover:text-red-300 border-gray-600 hover:bg-black">
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" className="text-red-400  hover:text-red-300 border-gray-600 hover:bg-black">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-white">Delete Upload</h3>
+                <p className="text-sm text-gray-400">This action cannot be undone.</p>
+              </div>
+            </div>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete this upload? This will permanently remove the file and cannot be undone.
+            </p>
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={cancelDelete}
+                className="flex-1 border-gray-600 text-gray-300 hover:text-white hover:bg-gray-800"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                disabled={deletingUploads.has(deleteConfirmId)}
+              >
+                {deletingUploads.has(deleteConfirmId) ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  'Delete'
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Logout Reminder Popup */}
+      {showLogoutReminder && (
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 50, scale: 0.9 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="fixed bottom-6 right-6 z-50"
+        >
+          <div className="bg-blue-600 text-white rounded-lg shadow-lg p-4 max-w-sm border border-blue-500">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-medium text-sm mb-1">Best Experience Reminder</h4>
+                <p className="text-xs text-blue-100 leading-relaxed">
+                  Please log out after uploading to experience the best experience.
+                  <br />
+                  <span className="font-medium text-white">PLEASE CLICK ON PROFILE TO LOGOUT</span>
+                </p>
+              </div>
+              <button
+                onClick={() => setShowLogoutReminder(false)}
+                className="flex-shrink-0 text-blue-200 hover:text-white transition-colors"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
