@@ -269,7 +269,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: Create an issue for bugs or feature requests
 - **Discussions**: Use GitHub Discussions for questions
-- **Email**: Contact us at support@zentha.in
+- **Email**: Contact us at hi@zentha.in
 
 ## 🙏 Acknowledgments
 
@@ -283,7 +283,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Version**: 0.1.0
 - **Status**: Active Development
-- **Last Updated**: December 2024
+- **Last Updated**: Aug 2025
 - **Maintainer**: Zentha Studio
 
 ---
