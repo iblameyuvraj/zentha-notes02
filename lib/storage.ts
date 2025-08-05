@@ -226,4 +226,125 @@ export async function deleteUpload(uploadId: string, teacherId: string) {
       error: error instanceof Error ? error.message : 'Unknown error occurred' 
     }
   }
+}
+
+// Get all approved uploads for students
+export async function getAllApprovedUploads() {
+  try {
+    console.log('Fetching approved uploads...')
+    
+    // Try to get all records first to see if RLS is blocking access
+    const { data: allData, error: allError } = await supabase
+      .from('teacher_uploads')
+      .select('*')
+      .limit(5)
+    
+    if (allError) {
+      console.error('Error accessing all records:', allError)
+      return { success: false, error: `Access error: ${allError.message}`, data: [] }
+    }
+    
+    console.log(`Found ${allData?.length || 0} total records`)
+    
+    // Now try to get approved records
+    const { data, error } = await supabase
+      .from('teacher_uploads')
+      .select('*')
+      .eq('status', 'Approved')
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      console.error('Error fetching approved uploads:', error)
+      return { success: false, error: error.message, data: [] }
+    }
+    
+    console.log(`Successfully fetched ${data?.length || 0} approved uploads`)
+    return { success: true, data: data || [] }
+  } catch (error) {
+    console.error('Error fetching approved uploads:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      data: [] 
+    }
+  }
+}
+
+// Temporary function to bypass RLS for testing
+export async function getAllUploadsForTesting() {
+  try {
+    console.log('Testing: Fetching all uploads without RLS...')
+    
+    const { data, error } = await supabase
+      .from('teacher_uploads')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      console.error('Error fetching all uploads:', error)
+      return { success: false, error: error.message, data: [] }
+    }
+    
+    console.log(`Successfully fetched ${data?.length || 0} total uploads`)
+    return { success: true, data: data || [] }
+  } catch (error) {
+    console.error('Error fetching all uploads:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      data: [] 
+    }
+  }
+}
+
+// Get approved uploads filtered by criteria
+export async function getApprovedUploadsByFilter(filters: {
+  year?: string
+  semester?: string
+  subject?: string
+  type?: string
+  subjectCombo?: string
+}) {
+  try {
+    console.log('Fetching filtered uploads with filters:', filters)
+    
+    let query = supabase
+      .from('teacher_uploads')
+      .select('*')
+      .eq('status', 'Approved')
+    
+    // Apply filters
+    if (filters.year) {
+      query = query.eq('year', filters.year)
+    }
+    if (filters.semester) {
+      query = query.eq('semester', filters.semester)
+    }
+    if (filters.subject) {
+      query = query.eq('subject', filters.subject)
+    }
+    if (filters.type) {
+      query = query.eq('type', filters.type)
+    }
+    if (filters.subjectCombo) {
+      query = query.eq('subject_combo', filters.subjectCombo)
+    }
+    
+    const { data, error } = await query.order('created_at', { ascending: false })
+    
+    if (error) {
+      console.error('Error fetching filtered uploads:', error)
+      return { success: false, error: error.message, data: [] }
+    }
+    
+    console.log(`Successfully fetched ${data?.length || 0} filtered uploads`)
+    return { success: true, data: data || [] }
+  } catch (error) {
+    console.error('Error fetching filtered uploads:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      data: [] 
+    }
+  }
 } 

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Zentha Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: #000000;
+            margin: 0;
+            padding: 20px 0;
+            min-height: 100vh;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #000000;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px #1a1a1a;
+            border: 1px solid #1a1a1a;
+        }
+        
+        .header {
+            background: #000000;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+        
+        .tagline {
+            font-size: 18px;
+            font-weight: 400;
+            color: #8e8e93;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+        
+        .content {
+            padding: 60px 40px;
+            background: #000000;
+        }
+        
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 24px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+        
+        .description {
+            font-size: 18px;
+            color: #8e8e93;
+            margin-bottom: 40px;
+            line-height: 1.7;
+            text-align: center;
+            font-weight: 400;
+        }
+        
+        .cta-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #ffffff;
+            color: #000000;
+            text-decoration: none;
+            padding: 20px 48px;
+            border-radius: 0;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: 1px solid #ffffff;
+            text-transform: uppercase;
+        }
+        
+        .cta-button:hover {
+            background: #000000;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+        
+        .security-section {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 32px;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .security-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .security-text {
+            color: #8e8e93;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .expiry-notice {
+            background: #1a1a1a;
+            border: 1px solid #ff3b30;
+            padding: 24px;
+            margin: 32px 0;
+            text-align: center;
+        }
+        
+        .expiry-notice p {
+            margin: 0;
+            color: #ff3b30;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .features-section {
+            margin: 48px 0;
+        }
+        
+        .features-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 32px;
+            text-align: center;
+            letter-spacing: -0.3px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+        
+        .feature-item {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            border-color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .feature-text {
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+        
+        .feature-description {
+            font-size: 14px;
+            color: #8e8e93;
+            margin-top: 8px;
+        }
+        
+        .footer {
+            background: #1a1a1a;
+            padding: 48px 40px;
+            text-align: center;
+            border-top: 1px solid #2a2a2a;
+        }
+        
+        .footer-text {
+            color: #8e8e93;
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .footer-links {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .footer-links a:hover {
+            color: #8e8e93;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #2a2a2a;
+            margin: 32px 0;
+        }
+        
+        .status-bar {
+            background: #1a1a1a;
+            padding: 16px 40px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        .status-text {
+            color: #8e8e93;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 10px;
+            }
+            
+            .header, .content, .footer {
+                padding: 40px 24px;
+            }
+            
+            .welcome-text {
+                font-size: 28px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="status-bar">
+            <div class="status-text">Zentha Notes • Email Verification</div>
+        </div>
+        
+        <div class="header">
+            <div class="logo">ZENTHA NOTES</div>
+            <p class="tagline">Advanced Learning Platform</p>
+        </div>
+        
+        <div class="content">
+            <h1 class="welcome-text">Verify Your Email</h1>
+            
+            <p class="description">
+                Complete your account setup to access premium study materials, previous year papers, and comprehensive learning resources.
+            </p>
+            
+            <div class="cta-container">
+                <a href="{{ .ConfirmationURL }}" class="cta-button">
+                    VERIFY EMAIL
+                </a>
+            </div>
+            
+            <div class="expiry-notice">
+                <p><strong>⚠️ SECURITY:</strong> This verification link expires in 24 hours</p>
+            </div>
+            
+            <div class="security-section">
+                <div class="security-title">
+                    <span>🔒</span>
+                    Security Notice
+                </div>
+                <p class="security-text">
+                    This verification link contains encrypted security tokens unique to your account. 
+                    Do not share this link with anyone. If you did not create this account, please ignore this email.
+                </p>
+            </div>
+            
+            <div class="features-section">
+                <h3 class="features-title">What You'll Get Access To</h3>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">📚</span>
+                        <div class="feature-text">Study Materials</div>
+                        <div class="feature-description">Comprehensive notes and resources</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📝</span>
+                        <div class="feature-text">Previous Papers</div>
+                        <div class="feature-description">Year-wise question papers</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📖</span>
+                        <div class="feature-text">Syllabus Coverage</div>
+                        <div class="feature-description">Detailed topic breakdown</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <div class="feature-text">Organized Content</div>
+                        <div class="feature-description">Subject-wise categorization</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p class="footer-text">
+                Need help? Contact our support team for immediate assistance.
+            </p>
+            
+            <div class="divider"></div>
+            
+            <p class="footer-text">
+                Best regards,<br>
+                <strong>The Zentha Notes Team</strong>
+            </p>
+            
+            <div class="footer-links">
+                <a href="#">WEBSITE</a>
+                <a href="#">SUPPORT</a>
+                <a href="#">PRIVACY</a>
+                <a href="#">TERMS</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

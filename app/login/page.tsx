@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { getRedirectPath } from "@/lib/redirect-utils"
+import { supabase } from "@/lib/supabase"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -17,6 +18,10 @@ export default function LoginPage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [showResendButton, setShowResendButton] = useState(false)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
+  const [cooldownTimer, setCooldownTimer] = useState(0)
   const router = useRouter()
   const { signIn, profile } = useAuth()
 
@@ -29,10 +34,34 @@ export default function LoginPage() {
     }
   }, [profile, loading, router])
 
+  // Handle cooldown timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    
+    if (cooldownTimer > 0) {
+      interval = setInterval(() => {
+        setCooldownTimer((prev) => {
+          if (prev <= 1) {
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [cooldownTimer])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setLoading(true)
+    setShowResendButton(false)
+    setResendSuccess(false)
     
     try {
       console.log('Attempting login for:', email)
@@ -46,6 +75,7 @@ export default function LoginPage() {
             error.message?.includes('Email not verified') ||
             error.message?.includes('Invalid login credentials') && error.message?.includes('email')) {
           setError("Please check your email and verify your account before logging in")
+          setShowResendButton(true)
         } else if (error.message?.includes('Invalid login credentials')) {
           setError("Email or Password is incorrect")
         } else if (error.message?.includes('User already registered') || 
@@ -68,6 +98,52 @@ export default function LoginPage() {
       setError("An unexpected error occurred. Please try again.")
       setLoading(false)
     }
+  }
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      setError("Please enter your email address first")
+      return
+    }
+
+    setResendLoading(true)
+    setError("")
+    setResendSuccess(false)
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email
+      })
+
+      if (error) {
+        console.error('Resend verification error:', error)
+        
+        // Check if it's a rate limiting error
+        if (error.message?.includes('25 seconds') || error.message?.includes('security purposes')) {
+          setError("Rate limit exceeded. Please wait before requesting another verification email.")
+          setCooldownTimer(25) // Start 25 second cooldown
+        } else {
+          setError("Failed to send verification email. Please try again.")
+        }
+      } else {
+        setResendSuccess(true)
+        setError("")
+        setShowResendButton(false)
+      }
+    } catch (error) {
+      console.error('Resend verification error:', error)
+      setError("An unexpected error occurred. Please try again.")
+    } finally {
+      setResendLoading(false)
+    }
+  }
+
+  // Format timer display
+  const formatTimer = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   if (success) {
@@ -180,6 +256,12 @@ export default function LoginPage() {
               </div>
             )}
 
+            {resendSuccess && (
+              <div className="mb-6 rounded-lg bg-green-500/20 border border-green-500/30 p-4">
+                <p className="text-green-300 text-sm font-medium">Verification email sent successfully! Please check your inbox.</p>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white font-medium">Email</Label>
@@ -191,7 +273,7 @@ export default function LoginPage() {
                   onChange={e => setEmail(e.target.value)} 
                   className="h-12 border-gray-800 bg-black text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
                   required 
-                  disabled={loading}
+                  disabled={loading || resendLoading}
                 />
               </div>
               
@@ -206,13 +288,13 @@ export default function LoginPage() {
                     onChange={e => setPassword(e.target.value)} 
                     className="h-12 border-gray-800 bg-gray-900 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 pr-10"
                     required 
-                    disabled={loading}
+                    disabled={loading || resendLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white disabled:opacity-50"
-                    disabled={loading}
+                    disabled={loading || resendLoading}
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5 transition-all duration-200 hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,19 +312,47 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="h-12 w-full bg-white text-black hover:bg-gray-100 font-medium" disabled={loading}>
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                    </svg>
-                    Logging in...
-                  </span>
-                ) : (
-                  "Login"
-                )}
-              </Button>
+              {showResendButton ? (
+                <Button 
+                  type="button" 
+                  onClick={handleResendVerification}
+                  className="h-12 w-full bg-purple-600 text-white hover:bg-purple-700 font-medium disabled:bg-gray-600 disabled:cursor-not-allowed" 
+                  disabled={resendLoading || cooldownTimer > 0}
+                >
+                  {resendLoading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                      Sending...
+                    </span>
+                  ) : cooldownTimer > 0 ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Wait {formatTimer(cooldownTimer)}
+                    </span>
+                  ) : (
+                    "Send verification email again"
+                  )}
+                </Button>
+              ) : (
+                <Button type="submit" className="h-12 w-full bg-white text-black hover:bg-gray-100 font-medium" disabled={loading}>
+                  {loading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                      Logging in...
+                    </span>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+              )}
 
               <div className="text-center text-sm text-gray-400">
                 Don&apos;t have an account?{' '}

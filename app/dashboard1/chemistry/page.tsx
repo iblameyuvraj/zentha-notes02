@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Settings as SettingsIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import UploadedContent from "@/components/ui/uploaded-content"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // RTU Papers data
 const rtuPapers = [
@@ -406,8 +408,8 @@ export default function StudentDashboard() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white dark:text-gray-100 mb-2">RTU Papers</h1>
-            <p className="text-gray-600 dark:text-gray-300">Access Previous Year Question Papers</p>
+            <h1 className="text-3xl font-bold text-white dark:text-gray-100 mb-2">Chemistry Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-300">Access RTU Papers and Teacher Uploads</p>
           </div>
         </div>
         
@@ -422,143 +424,160 @@ export default function StudentDashboard() {
           </button>
         </div>
 
-        {/* Filters */}
-        <div className="bg-black dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <Filter className="w-5 h-5 text-gray-500 dark:text-gray-300" />
-            <h2 className="text-lg font-semibold text-white dark:text-gray-100">Filters</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Select value={subjectFilter} onValueChange={setSubjectFilter}>
-              <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
-                <SelectValue placeholder="Subject" />
-              </SelectTrigger>
-              <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
-                <SelectItem value="all">All Subjects</SelectItem>
-                <SelectItem value="Chemistry">Chemistry</SelectItem>
-                <SelectItem value="Civil Engineering">Civil Engineering</SelectItem>
-                <SelectItem value="Mathematics">Mathematics</SelectItem>
-                <SelectItem value="Mechanical Engineering">Mechanical Engineering</SelectItem>
-                <SelectItem value="Communication Skills">Communication Skills</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={semesterFilter} onValueChange={setSemesterFilter}>
-              <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
-                <SelectValue placeholder="Semester" />
-              </SelectTrigger>
-              <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
-                <SelectItem value="all">All Semesters</SelectItem>
-                <SelectItem value="1st Semester">1st Semester</SelectItem>
-                <SelectItem value="2nd Semester">2nd Semester</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Previous Year">Previous Year</SelectItem>
-                <SelectItem value="Midterm">Midterm</SelectItem>
-                <SelectItem value="Notes">Notes</SelectItem>
-                <SelectItem value="Syllabus">Syllabus</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
-                <SelectValue placeholder="Year" />
-              </SelectTrigger>
-              <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
-                <SelectItem value="all">All Years</SelectItem>
-                <SelectItem value="2023-2024">2023-2024</SelectItem>
-                <SelectItem value="2022-2023">2022-2023</SelectItem>
-                <SelectItem value="2021-2022">2021-2022</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="mt-4">
-            <Button 
-              variant="outline" 
-              onClick={clearAllFilters}
-              className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100 border-gray-200 dark:border-gray-600"
-            >
-              Clear All Filters
-            </Button>
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="mb-4">
-          <p className="text-gray-600 dark:text-gray-300">
-            Showing {filteredFiles.length} of {rtuPapers.length} documents
-          </p>
-        </div>
-
-        {/* File Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFiles.map((file) => (
-            <Card
-              key={file.id}
-              className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-2">
-                    {getTypeIcon(file.type)}
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(file.type)}`}>
-                      {file.type}
-                    </span>
-                  </div>
+        {/* Tabs */}
+        <Tabs defaultValue="rtu-papers" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-800 dark:bg-gray-700">
+            <TabsTrigger value="rtu-papers" className="text-white">RTU Papers</TabsTrigger>
+            <TabsTrigger value="uploaded-content" className="text-white">Teacher Uploads</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="rtu-papers" className="mt-6">
+            {/* RTU Papers Content */}
+            <div className="space-y-6">
+              {/* Filters */}
+              <div className="bg-black dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Filter className="w-5 h-5 text-gray-500 dark:text-gray-300" />
+                  <h2 className="text-lg font-semibold text-white dark:text-gray-100">Filters</h2>
                 </div>
-                <CardTitle className="text-lg leading-tight text-gray-900 dark:text-gray-100">{file.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                    <GraduationCap className="w-4 h-4 mr-2" />
-                    {file.subject}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {file.semester} • {file.year}
-                  </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Select value={subjectFilter} onValueChange={setSubjectFilter}>
+                    <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
+                      <SelectValue placeholder="Subject" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
+                      <SelectItem value="all">All Subjects</SelectItem>
+                      <SelectItem value="Chemistry">Chemistry</SelectItem>
+                      <SelectItem value="Civil Engineering">Civil Engineering</SelectItem>
+                      <SelectItem value="Mathematics">Mathematics</SelectItem>
+                      <SelectItem value="Mechanical Engineering">Mechanical Engineering</SelectItem>
+                      <SelectItem value="Communication Skills">Communication Skills</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={semesterFilter} onValueChange={setSemesterFilter}>
+                    <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
+                      <SelectValue placeholder="Semester" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
+                      <SelectItem value="all">All Semesters</SelectItem>
+                      <SelectItem value="1st Semester">1st Semester</SelectItem>
+                      <SelectItem value="2nd Semester">2nd Semester</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
+                      <SelectValue placeholder="Type" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="Previous Year">Previous Year</SelectItem>
+                      <SelectItem value="Midterm">Midterm</SelectItem>
+                      <SelectItem value="Notes">Notes</SelectItem>
+                      <SelectItem value="Syllabus">Syllabus</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={yearFilter} onValueChange={setYearFilter}>
+                    <SelectTrigger className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
+                      <SelectValue placeholder="Year" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
+                      <SelectItem value="all">All Years</SelectItem>
+                      <SelectItem value="2023-2024">2023-2024</SelectItem>
+                      <SelectItem value="2022-2023">2022-2023</SelectItem>
+                      <SelectItem value="2021-2022">2021-2022</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="flex gap-2">
+
+                <div className="mt-4">
                   <Button 
-                    className="flex-1" 
-                    size="sm"
-                    onClick={() => handleDownload(file.filepath, file.filename)}
+                    variant="outline" 
+                    onClick={clearAllFilters}
+                    className="bg-gray-50 dark:bg-gray-700 dark:text-gray-100 border-gray-200 dark:border-gray-600"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    className="flex-1" 
-                    size="sm"
-                    onClick={() => handleAskChatGPT(file)}
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Ask ChatGPT
+                    Clear All Filters
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </div>
 
-        {filteredFiles.length === 0 && (
-          <div className="text-center py-12">
-            <FileText className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No documents found</h3>
-            <p className="text-gray-600 dark:text-gray-300">Try adjusting your filters or search terms.</p>
-          </div>
-        )}
+              {/* Results Count */}
+              <div className="mb-4">
+                <p className="text-gray-600 dark:text-gray-300">
+                  Showing {filteredFiles.length} of {rtuPapers.length} documents
+                </p>
+              </div>
+
+              {/* File Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredFiles.map((file) => (
+                  <Card
+                    key={file.id}
+                    className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-2">
+                          {getTypeIcon(file.type)}
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(file.type)}`}>
+                            {file.type}
+                          </span>
+                        </div>
+                      </div>
+                      <CardTitle className="text-lg leading-tight text-gray-900 dark:text-gray-100">{file.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                          <GraduationCap className="w-4 h-4 mr-2" />
+                          {file.subject}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          {file.semester} • {file.year}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          className="flex-1" 
+                          size="sm"
+                          onClick={() => handleDownload(file.filepath, file.filename)}
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download PDF
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="flex-1" 
+                          size="sm"
+                          onClick={() => handleAskChatGPT(file)}
+                        >
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          Ask ChatGPT
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {filteredFiles.length === 0 && (
+                <div className="text-center py-12">
+                  <FileText className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No documents found</h3>
+                  <p className="text-gray-600 dark:text-gray-300">Try adjusting your filters or search terms.</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="uploaded-content" className="mt-6">
+            <UploadedContent />
+          </TabsContent>
+        </Tabs>
 
         {/* AI Assistant Dialog */}
         <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
