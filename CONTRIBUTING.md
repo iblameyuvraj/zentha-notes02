@@ -429,3 +429,4 @@ By contributing to Zentha Notes, you agree that your contributions will be licen
 Your contributions help make education more accessible and technology more powerful.
 
 For questions about contributing, please contact us at hi@zentha.in 
+
