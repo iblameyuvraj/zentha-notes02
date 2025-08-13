@@ -85,12 +85,12 @@ Zentha Notes is a comprehensive educational platform designed to provide high-qu
 4. **Set up Supabase Database**
    
    Run the SQL scripts in your Supabase SQL editor:
-   - [Database Setup](./zAll%20setups/databse-setup/db.sql)
-   - [Teacher Uploads Table](./zAll%20setups/databse-setup/teacher_uploads.sql)
+   - [Database Setup](./zAll%20setups/database-setup/db.sql)
+   - [Teacher Uploads Table](./zAll%20setups/database-setup/teacher_uploads.sql)
 
 5. **Configure Storage Bucket**
    
-   Follow the [Storage Setup Guide](./zAll%20setups/STORAGE_SETUP.md) to create and configure the `teacher-uploads` bucket.
+   Follow the [Storage Setup Guide](./zAll%20setups/MD-Files/STORAGE_SETUP.md) to create and configure the `teacher-uploads` bucket.
 
 6. **Start the development server**
    ```bash
@@ -175,7 +175,7 @@ The application uses the following main tables:
 - **profiles** - User profiles and academic information
 - **teacher_uploads** - File upload records and metadata
 
-See the [Database Setup Guide](./zAll%20setups/databse-setup/) for detailed schema information.
+See the [Database Setup Guide](./zAll%20setups/database-setup/) for detailed schema information.
 
 ## 📚 Usage
 
@@ -259,11 +259,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Documentation
 
-- [Supabase Setup Guide](./zAll%20setups/SUPABASE_SETUP.md)
-- [Authentication Setup](./zAll%20setups/AUTH_SETUP.md)
-- [Storage Setup Guide](./zAll%20setups/STORAGE_SETUP.md)
-- [Teacher Dashboard Guide](./zAll%20setups/TEACHER_DASHBOARD_IMPLEMENTATION.md)
-- [SEO Implementation](./zAll%20setups/SEO_IMPLEMENTATION.md)
+- [Supabase Setup Guide](./zAll%20setups/MD-Files/SUPABASE_SETUP.md)
+- [Authentication Setup](./zAll%20setups/MD-Files/AUTH_SETUP.md)
+- [Storage Setup Guide](./zAll%20setups/MD-Files/STORAGE_SETUP.md)
+- [Teacher Dashboard Guide](./zAll%20setups/MD-Files/TEACHER_DASHBOARD_IMPLEMENTATION.md)
+- [SEO Implementation](./zAll%20setups/MD-Files/SEO_IMPLEMENTATION.md)
 
 ### Getting Help
 
@@ -281,7 +281,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Project Status
 
-- **Version**: 0.1.0
+- **Version**: 1.0
 - **Status**: Active Development
 - **Last Updated**: Aug 2025
 - **Maintainer**: Zentha Studio
@@ -291,4 +291,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   <p>Made by <a href="https://zentha.in">Zentha Studio</a> in collab with <a href="https://yuvraj.site">Yuvraj Soni</a></p>
   <p>Empowering education through technology</p>
+<<<<<<< HEAD
 </div> 
+=======
+</div>
+>>>>>>> 584de74 (feat: Implement comprehensive authentication setup with Supabase, including user profile management and multi-session support)

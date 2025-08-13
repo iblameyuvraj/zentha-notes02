@@ -57,7 +57,7 @@ Examples of unacceptable behavior include:
 
 2. **Clone your fork**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/zentha-notes.git
+   git clone https://github.com/iblameyuvraj/zentha-notes02.git
    cd zentha-notes
    ```
 
@@ -93,7 +93,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 1. Create a Supabase project at [supabase.com](https://supabase.com)
 2. Run the SQL scripts from `zAll setups/databse-setup/` in your Supabase SQL editor
-3. Configure storage bucket following `zAll setups/STORAGE_SETUP.md`
+3. Configure storage bucket following `zAll setups/MD-Files/STORAGE_SETUP.md`
 
 ### 4. Start Development Server
 
@@ -428,4 +428,4 @@ By contributing to Zentha Notes, you agree that your contributions will be licen
 
 Your contributions help make education more accessible and technology more powerful.
 
-For questions about contributing, please contact us at support@zentha.in 
+For questions about contributing, please contact us at hi@zentha.in 
