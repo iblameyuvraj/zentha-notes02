@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { Analytics } from '@vercel/analytics/react'
+import { DashboardSubscriptionMount } from '@/components/dashboard-subscription-mount'
 
 // SEO Metadata Configuration
 export const metadata: Metadata = {
@@ -229,6 +230,7 @@ html {
       <body>
         <AuthProvider>
           {children}
+          <DashboardSubscriptionMount />
         </AuthProvider>
         <Analytics />
       </body>

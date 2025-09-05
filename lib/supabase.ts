@@ -1,9 +1,32 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Server-side client for API routes
+export function createClient(cookieStore: any) {
+  return createServerClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options: any) {
+          cookieStore.set(name, value, options)
+        },
+        remove(name: string, options: any) {
+          cookieStore.set(name, '', { ...options, maxAge: 0 })
+        },
+      },
+    }
+  )
+}
+
+export const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     // Allow multiple sessions
     autoRefreshToken: true,
@@ -46,6 +69,14 @@ export interface Profile {
   created_at?: string
   last_login?: string
   total_downloads?: number
+  subscription_active?: boolean
+  subscription_plan?: string
+  subscription_start_date?: string
+  subscription_end_date?: string
+  razorpay_order_id?: string
+  razorpay_payment_id?: string
+  payment_amount?: number
+  payment_status?: string
 }
 
 export interface AuthUser {

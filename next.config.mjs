@@ -120,7 +120,7 @@ const nextConfig = {
 
   // Environment variables for SEO
   env: {
-    SITE_URL: process.env.SITE_URL || 'https://zentha.in',
+    SITE_URL: process.env.SITE_URL || 'https://notes.zentha.in',
     SITE_NAME: 'Zentha Notes',
     SITE_DESCRIPTION: 'Premium study materials and educational resources for engineering students',
   },

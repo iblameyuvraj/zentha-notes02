@@ -3,16 +3,21 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, Profile, AuthUser } from '@/lib/supabase'
+import { getRedirectPath } from '@/lib/redirect-utils'
 import { User } from '@supabase/supabase-js'
 
 interface AuthContextType {
   user: User | null
   profile: Profile | null
   loading: boolean
+  hasActiveSubscription: boolean
   signUp: (email: string, password: string, userData: any) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>
+  checkSubscriptionAndRedirect: () => void
+  refreshProfile: () => Promise<Profile | null>
+  syncProfileFromServer: () => Promise<Profile | null>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -22,6 +27,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+
+  // Check if user has active subscription
+  const hasActiveSubscription = Boolean(profile?.subscription_active && 
+    (!profile?.subscription_end_date || new Date(profile.subscription_end_date) > new Date()))
 
   useEffect(() => {
     // Get initial session
@@ -111,6 +120,88 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const syncProfileFromServer = async (): Promise<Profile | null> => {
+    try {
+      // Get access token
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
+
+      const res = await fetch('/api/subscription/status', {
+        headers: {
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        cache: 'no-store',
+      })
+      const json = await res.json()
+      if (!res.ok || !json?.profile) {
+        console.error('syncProfileFromServer error:', json)
+        return null
+      }
+      setProfile(json.profile)
+      return json.profile as Profile
+    } catch (e) {
+      console.error('syncProfileFromServer exception:', e)
+      return null
+    }
+  }
+
+  const refreshProfile = async (): Promise<Profile | null> => {
+    if (!user) return null
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (error) {
+        console.error('Error refreshing profile:', error)
+        return null
+      }
+      setProfile(data)
+      return data
+    } catch (error) {
+      console.error('Error refreshing profile:', error)
+      return null
+    }
+  }
+
+  const fetchProfileAndRedirect = async (userId: string) => {
+    try {
+      console.log('Fetching profile for user:', userId)
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (error) {
+        console.error('Error fetching profile:', error)
+        router.push('/pay') // Default to payment page on error
+        return
+      }
+
+      console.log('Profile fetched successfully:', data)
+      setProfile(data)
+
+      // Check subscription status and redirect accordingly
+      const userHasSubscription = data?.subscription_active && 
+        (!data?.subscription_end_date || new Date(data.subscription_end_date) > new Date())
+      
+      if (userHasSubscription) {
+        // User has active subscription, redirect to their dashboard
+        const redirectPath = getRedirectPath(data)
+        router.push(redirectPath)
+      } else {
+        // User doesn't have subscription, redirect to payment page
+        router.push('/pay')
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error)
+      router.push('/pay') // Default to payment page on error
+    }
+  }
+
   const signUp = async (email: string, password: string, userData: any) => {
     try {
       console.log('Starting signup with data:', { email, userData })
@@ -137,7 +228,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('User created successfully:', data.user?.id)
 
-      // Return success immediately - profile will be created by trigger or on first login
+      // After successful signup, redirect to payment page since new users don't have subscription
+      if (data.user) {
+        setTimeout(() => {
+          router.push('/pay')
+        }, 100)
+      }
+
       return { error: null }
     } catch (error) {
       console.error('Signup error:', error)
@@ -161,7 +258,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.user) {
         console.log('User signed in successfully:', data.user.id)
-        await fetchProfile(data.user.id)
+        const userProfile = await fetchProfileAndRedirect(data.user.id)
       }
 
       return { error: null }
@@ -204,14 +301,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const checkSubscriptionAndRedirect = () => {
+    if (user && !hasActiveSubscription) {
+      router.push('/pay')
+    }
+  }
+
   const value = {
     user,
     profile,
     loading,
+    hasActiveSubscription,
     signUp,
     signIn,
     signOut,
-    updateProfile
+    updateProfile,
+    checkSubscriptionAndRedirect,
+    refreshProfile,
+    syncProfileFromServer
   }
 
   return (

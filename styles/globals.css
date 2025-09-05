@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure Razorpay modal is always above app overlays and interactive */
+.razorpay-container,
+.razorpay-container * {
+  z-index: 2147483647 !important; /* Max z-index to sit above all overlays */
+}
+.razorpay-backdrop,
+.razorpay-modal,
+[class*="razorpay"] {
+  z-index: 2147483647 !important;
+  pointer-events: auto !important; /* Allow touch/click interactions */
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

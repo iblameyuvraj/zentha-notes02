@@ -195,7 +195,7 @@ export function Settings() {
                 </DialogHeader>
                 <DialogFooter>
                   <Button onClick={confirmLogout} variant="outline" className="border-gray-600 text-black hover:bg-gray-700">
-                    Logout
+                    <a href="/">Logout</a>
                   </Button>
                   <DialogClose asChild>
                     <Button variant="outline" className="border-gray-600 text-black hover:bg-gray-700">Cancel</Button>
