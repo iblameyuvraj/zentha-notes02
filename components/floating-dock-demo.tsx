@@ -5,10 +5,9 @@ import {
   IconBook,
   IconBrandInstagram,
   IconBrandLinkedin,
-  IconBrandFacebook,
+
   IconMapPin,
-  IconBrandYoutube,
-  IconCoffee,
+
 } from "@tabler/icons-react"
 import { Button } from "./ui/button"
 
@@ -17,38 +16,25 @@ export default function FooterDemo() {
 
   const footerLinks = {
     company: [
-      { name: "About Us", href: "#" },
-      { name: "Our Mission", href: "#" },
-      { name: "Careers", href: "#" },
-      { name: "Press", href: "#" },
-    ],
-    resources: [
-      { name: "Documentation", href: "#" },
-      { name: "Help Center", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Tutorials", href: "#" },
+      { name: "About Us", href: "/about-us" },
+      { name: "Careers", href: "mailto:hi@zentha.in" },
     ],
     legal: [
       { name: "Privacy Policy", href: "/policies/privacy-policy" },
       { name: "Terms of Service", href: "/policies/terms-and-conditions" },
       { name: "Refund Policy", href: "/policies/refund-cancellation" },
-      { name: "Cookie Policy", href: "#" },
     ],
     support: [
-      { name: "Contact Us", href: "#" },
-      { name: "FAQ", href: "#" },
-      { name: "Live Chat", href: "#" },
-      { name: "Support Ticket", href: "#" },
+      { name: "Contact Us", href: "mailto:hi@zentha.in" },
+      { name: "FAQ", href: "/faq" },
     ],
   }
 
   const socialLinks = [
-    { name: "Facebook", icon: <IconBrandFacebook className="h-5 w-5" />, href: "#" },
-    { name: "Twitter", icon: <IconBrandTwitter className="h-5 w-5" />, href: "#" },
-    { name: "Instagram", icon: <IconBrandInstagram className="h-5 w-5" />, href: "#" },
-    { name: "LinkedIn", icon: <IconBrandLinkedin className="h-5 w-5" />, href: "#" },
-    { name: "YouTube", icon: <IconBrandYoutube className="h-5 w-5" />, href: "#" },
-    { name: "GitHub", icon: <IconBrandGithub className="h-5 w-5" />, href: "#" },
+    { name: "Twitter", icon: <IconBrandTwitter className="h-5 w-5" />, href: "https://x.com/iblameyuvraj" },
+    { name: "Instagram", icon: <IconBrandInstagram className="h-5 w-5" />, href: "https://www.instagram.com/zenthastudio/" },
+    { name: "LinkedIn", icon: <IconBrandLinkedin className="h-5 w-5" />, href: "https://www.linkedin.com/company/zenthaai/" },
+    { name: "GitHub", icon: <IconBrandGithub className="h-5 w-5" />, href: "https://github.com/iblameyuvraj" },
   ]
 
   return (
@@ -97,11 +83,11 @@ export default function FooterDemo() {
             </ul>
           </div>
 
-          {/* Resources Links */}
+          {/* legal Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Resources</h3>
+            <h3 className="text-lg font-semibold text-white">Legal</h3>
             <ul className="space-y-2">
-              {footerLinks.resources.map((link) => (
+              {footerLinks.legal.map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}

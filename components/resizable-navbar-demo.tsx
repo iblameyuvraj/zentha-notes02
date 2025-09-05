@@ -19,12 +19,12 @@ export default function NavbarDemo() {
       link: "/",
     },
     {
-      name: "Features",
-      link: "#features",
+      name: "Pricing",
+      link: "/pay",
     },
     {
       name: "About Us",
-      link: "#about-us",
+      link: "/about-us",
     },
   ];
 
