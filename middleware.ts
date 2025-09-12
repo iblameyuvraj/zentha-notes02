@@ -9,6 +9,12 @@ export async function middleware(req: NextRequest) {
     },
   })
   
+  // Bypass middleware for static assets (including PDFs) to avoid breaking range requests
+  // and default browser viewers on mobile/production.
+  const { pathname } = req.nextUrl
+  if (/\.(?:pdf|png|jpe?g|gif|webp|svg|ico|txt|css|js|map|json|woff2?|ttf|eot|mp4|webm)$/i.test(pathname)) {
+    return response
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -165,6 +171,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    // Exclude any request that looks like a file (has a dot/extension) to prevent
+    // intercepting static assets placed under the `public/` directory, e.g. /1st-year/.../*.pdf
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
   ],
 } 
