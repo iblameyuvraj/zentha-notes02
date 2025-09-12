@@ -1,0 +1,12 @@
+[
+    {
+      "id": 1001,
+      "title": "Mid Terms Papers",
+      "subject": "Physics",
+      "semester": "1st Semester",
+      "year": "2024-2025",
+      "type": "Midterm",
+      "filename": "physics-midter.pdf",
+      "filepath": "/1st-year/physics/mid-term/physics-midter.pdf"
+    }
+  ]

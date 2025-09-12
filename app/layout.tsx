@@ -5,6 +5,7 @@ import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { Analytics } from '@vercel/analytics/react'
 import { DashboardSubscriptionMount } from '@/components/dashboard-subscription-mount'
+import { Toaster } from 'sonner'
 
 // SEO Metadata Configuration
 export const metadata: Metadata = {
@@ -231,6 +232,7 @@ html {
         <AuthProvider>
           {children}
           <DashboardSubscriptionMount />
+          <Toaster position="top-center" richColors closeButton />
         </AuthProvider>
         <Analytics />
       </body>

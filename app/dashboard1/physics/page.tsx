@@ -1,15 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { Download, Filter, FileText, Calendar, BookOpen, GraduationCap, Moon, Sun, MessageSquare } from "lucide-react"
+import { Filter, FileText, Calendar, BookOpen, GraduationCap, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Settings as SettingsIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import PDFViewerNew from "@/components/ui/pdf-viewer-new"
+import midtermPapers from "./sem1-json/midterm.json"
 import UploadedContent from "@/components/ui/uploaded-content"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useAuth } from "@/contexts/AuthContext"
 
 // RTU Papers data
 const rtuPapers = [
@@ -319,11 +321,12 @@ export default function StudentDashboard() {
   const [typeFilter, setTypeFilter] = useState("all")
   const [yearFilter, setYearFilter] = useState("all")
   const [darkMode, setDarkMode] = useState(true)
-  const [showAIDialog, setShowAIDialog] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<any>(null)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const router = useRouter()
 
-  const filteredFiles = rtuPapers.filter((file: any) => {
+  const allPapers = [...rtuPapers, ...midtermPapers]
+
+  const filteredFiles = allPapers.filter((file: any) => {
     const matchesSubject = subjectFilter === "all" || file.subject === subjectFilter
     const matchesSemester = semesterFilter === "all" || file.semester === semesterFilter
     const matchesType = typeFilter === "all" || file.type === typeFilter
@@ -331,6 +334,18 @@ export default function StudentDashboard() {
 
     return matchesSubject && matchesSemester && matchesType && matchesYear
   })
+
+  const { user } = useAuth();
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black text-white">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Please log in to access this page</h1>
+          <p>You need to be authenticated to view this content.</p>
+        </div>
+      </div>
+    );
+  }
 
   const clearAllFilters = () => {
     setSubjectFilter("all")
@@ -369,37 +384,8 @@ export default function StudentDashboard() {
     }
   }
 
-  const handleDownload = (filepath: string, filename: string) => {
-    // Create a temporary link element to trigger download
-    const link = document.createElement('a')
-    link.href = filepath
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  const handleAskChatGPT = (file: any) => {
-    setSelectedFile(file)
-    setShowAIDialog(true)
-  }
-
-  const handleConfirmAI = () => {
-    if (selectedFile) {
-      // Download the file first
-      handleDownload(selectedFile.filepath, selectedFile.filename)
-      
-      // Create a ChatGPT prompt with file information
-      const prompt = `I need help understanding the "${selectedFile.title} (${selectedFile.semester}, ${selectedFile.year})" question paper. I am uploading the file to you and you will help me to understand the questions and answer of the questions one by one.`
-      
-      // Encode the prompt for URL
-      const encodedPrompt = encodeURIComponent(prompt)
-      
-      // Close dialog and redirect to ChatGPT with the prompt
-      setShowAIDialog(false)
-      setSelectedFile(null)
-      window.open(`https://chat.openai.com/?prompt=${encodedPrompt}`, '_blank')
-    }
+  const handleViewPdf = (file: any) => {
+    setPdfUrl(file.filepath)
   }
 
   return (
@@ -506,7 +492,7 @@ export default function StudentDashboard() {
               {/* Results Count */}
               <div className="mb-4">
                 <p className="text-gray-600 dark:text-gray-300">
-                  Showing {filteredFiles.length} of {rtuPapers.length} documents
+                  Showing {filteredFiles.length} of {allPapers.length} documents
                 </p>
               </div>
 
@@ -541,21 +527,13 @@ export default function StudentDashboard() {
                       </div>
                       <div className="flex gap-2">
                         <Button 
-                          className="flex-1" 
-                          size="sm"
-                          onClick={() => handleDownload(file.filepath, file.filename)}
-                        >
-                          <Download className="w-4 h-4 mr-2" />
-                          Download PDF
-                        </Button>
-                        <Button 
                           variant="outline"
                           className="flex-1" 
                           size="sm"
-                          onClick={() => handleAskChatGPT(file)}
+                          onClick={() => handleViewPdf(file)}
                         >
-                          <MessageSquare className="w-4 h-4 mr-2" />
-                          Ask ChatGPT
+                          <Eye className="w-4 h-4 mr-2" />
+                          View PDF
                         </Button>
                       </div>
                     </CardContent>
@@ -578,49 +556,14 @@ export default function StudentDashboard() {
           </TabsContent>
         </Tabs>
 
-        {/* AI Assistant Dialog */}
-        <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
-          <DialogContent className="sm:max-w-md bg-gray-900 border border-gray-800">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-gray-100 flex items-center gap-2">
-                <MessageSquare className="w-6 h-6 text-blue-400" />
-                AI Assistant Instructions
-              </DialogTitle>
-              <DialogDescription className="text-gray-300 mt-4 space-y-3">
-                <div className="bg-blue-900/30 border border-blue-800 rounded-lg p-4">
-                  <p className="text-sm text-blue-200 font-medium mb-2">📋 What will happen:</p>
-                  <ul className="text-sm text-blue-300 space-y-1">
-                    <li>• The file will be downloaded to your device</li>
-                    <li>• ChatGPT will open in a new tab</li>
-                    <li>• You'll need to upload the downloaded file to ChatGPT</li>
-                    <li>• The AI will help you with the question paper</li>
-                  </ul>
-                </div>
-                <p className="text-sm text-gray-400">
-                  Click "OK" to proceed with downloading the file and opening ChatGPT.
-                </p>
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex gap-3 mt-6">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setShowAIDialog(false)
-                  setSelectedFile(null)
-                }}
-                className="flex-1 border-gray-700 text-black hover:bg-gray-800"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleConfirmAI}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                OK
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* PDF Viewer */}
+        {pdfUrl && (
+          <PDFViewerNew 
+            url={pdfUrl} 
+            title="Document Viewer"
+            onClose={() => setPdfUrl(null)}
+          />
+        )}
       </div>
     </div>
   )
