@@ -32,26 +32,38 @@ function TeacherLoginContent() {
 
   // Check if user is already logged in and is a teacher
   useEffect(() => {
+    let mounted = true
+    
     const checkTeacherAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        // Fetch profile to check role
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-        
-        if (profile && profile.role === 'teacher') {
-          router.push("/teacher-dashboard")
-        } else if (profile && profile.role !== 'teacher') {
-          setError("Access denied. Only teachers can login here.")
-          await supabase.auth.signOut()
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user && mounted) {
+          // Fetch profile to check role
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
+          
+          if (mounted) {
+            if (profile && profile.role === 'teacher') {
+              router.push("/teacher-dashboard")
+            } else if (profile && profile.role !== 'teacher') {
+              setError("Access denied. Only teachers can login here.")
+              await supabase.auth.signOut()
+            }
+          }
         }
+      } catch (error) {
+        console.error('Error checking teacher auth:', error)
       }
     }
     
     checkTeacherAuth()
+    
+    return () => {
+      mounted = false
+    }
   }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,9 +104,10 @@ function TeacherLoginContent() {
         // Check if the user is a teacher
         if (profile && profile.role === 'teacher') {
           setSuccess("Login successful! Redirecting to teacher dashboard...")
+          // Reduce timeout to prevent user confusion
           setTimeout(() => {
             router.push("/teacher-dashboard")
-          }, 1500)
+          }, 800)
         } else {
           // User is not a teacher, sign them out and show error
           await supabase.auth.signOut()

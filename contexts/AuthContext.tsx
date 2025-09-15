@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [initializing, setInitializing] = useState(true)
   const router = useRouter()
 
   // Check if user has active subscription
@@ -33,14 +34,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (!profile?.subscription_end_date || new Date(profile.subscription_end_date) > new Date()))
 
   useEffect(() => {
+    let mounted = true
+    
     // Get initial session
     const getSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         
+        if (!mounted) return
+        
         if (error) {
           console.error('Error getting session:', error)
           setLoading(false)
+          setInitializing(false)
           return
         }
         
@@ -49,10 +55,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           await fetchProfile(session.user.id)
         }
-        setLoading(false)
+        
+        if (mounted) {
+          setLoading(false)
+          setInitializing(false)
+        }
       } catch (error) {
         console.error('Error in getSession:', error)
-        setLoading(false)
+        if (mounted) {
+          setLoading(false)
+          setInitializing(false)
+        }
       }
     }
 
@@ -63,7 +76,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         console.log('Auth state change:', event, session?.user?.id)
         
+        if (!mounted) return
+        
         try {
+          // Prevent unnecessary updates during initialization
+          if (initializing && event === 'INITIAL_SESSION') {
+            return
+          }
+          
           setUser(session?.user ?? null)
           
           if (session?.user) {
@@ -71,10 +91,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           } else {
             setProfile(null)
           }
-          setLoading(false)
+          
+          if (mounted) {
+            setLoading(false)
+          }
         } catch (error) {
           console.error('Error in auth state change:', error)
-          setLoading(false)
+          if (mounted) {
+            setLoading(false)
+          }
         }
       }
     )
@@ -83,7 +108,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key?.includes('supabase') || e.key?.includes('auth')) {
         console.log('Storage change detected, refreshing session')
-        getSession()
+        if (!loading && mounted) {
+          getSession()
+        }
       }
     }
 
@@ -92,12 +119,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return () => {
+      mounted = false
       subscription.unsubscribe()
       if (typeof window !== 'undefined') {
         window.removeEventListener('storage', handleStorageChange)
       }
     }
-  }, [])
+  }, [loading, initializing])
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -110,13 +138,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Error fetching profile:', error)
-        return
+        return null
       }
 
       console.log('Profile fetched successfully:', data)
       setProfile(data)
+      return data
     } catch (error) {
       console.error('Error fetching profile:', error)
+      return null
     }
   }
 
@@ -126,19 +156,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: sessionData } = await supabase.auth.getSession()
       const accessToken = sessionData?.session?.access_token
 
-      const res = await fetch('/api/subscription/status', {
-        headers: {
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-        cache: 'no-store',
-      })
-      const json = await res.json()
-      if (!res.ok || !json?.profile) {
-        console.error('syncProfileFromServer error:', json)
+      if (!accessToken) {
+        console.warn('No access token available for sync')
         return null
       }
-      setProfile(json.profile)
-      return json.profile as Profile
+
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+
+      try {
+        const res = await fetch('/api/subscription/status', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+          signal: controller.signal,
+        })
+        
+        clearTimeout(timeoutId)
+        
+        if (!res.ok) {
+          console.error('syncProfileFromServer HTTP error:', res.status, res.statusText)
+          return null
+        }
+        
+        const json = await res.json()
+        
+        if (!json?.profile) {
+          console.error('syncProfileFromServer error: no profile in response', json)
+          return null
+        }
+        
+        console.log(`Profile synced in ${json.responseTime || 'unknown'}ms ${json.cached ? '(cached)' : '(fresh)'}`)
+        setProfile(json.profile)
+        return json.profile as Profile
+      } catch (fetchError) {
+        clearTimeout(timeoutId)
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          console.error('syncProfileFromServer timeout after 5s')
+        } else {
+          console.error('syncProfileFromServer fetch error:', fetchError)
+        }
+        return null
+      }
     } catch (e) {
       console.error('syncProfileFromServer exception:', e)
       return null
@@ -245,6 +306,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       console.log('Attempting sign in for:', email)
+      setLoading(true)
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -253,17 +315,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Sign in error:', error)
+        setLoading(false)
         return { error }
       }
 
       if (data.user) {
         console.log('User signed in successfully:', data.user.id)
-        const userProfile = await fetchProfileAndRedirect(data.user.id)
+        // Don't call fetchProfileAndRedirect here - let the auth state change handle it
+        // This prevents race conditions and duplicate redirects
       }
 
       return { error: null }
     } catch (error) {
       console.error('Sign in error:', error)
+      setLoading(false)
       return { error }
     }
   }

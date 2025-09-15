@@ -28,6 +28,8 @@ const plans = [
 
 export default function PricingPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<'idle' | 'creating-order' | 'opening-gateway' | 'processing'>('idle');
+  const [showPaymentOverlay, setShowPaymentOverlay] = useState(false);
   const { user, profile } = useAuth();
   const router = useRouter();
 
@@ -38,16 +40,19 @@ export default function PricingPage() {
       return;
     }
 
+    // Immediately show overlay to prevent app access
     setIsLoading(true);
+    setShowPaymentOverlay(true);
+    setPaymentStep('creating-order');
     
     try {
       console.log('Starting payment for user:', user.id);
       
-      // Create order
       // Get Supabase access token for authenticated API calls
       const { supabase } = await import('@/lib/supabase');
       let { data: sessionData } = await supabase.auth.getSession();
       let accessToken = sessionData?.session?.access_token;
+      
       if (!accessToken) {
         console.log('[payment] No access token yet, trying to refresh session...');
         const { data: refreshed } = await supabase.auth.refreshSession();
@@ -56,20 +61,28 @@ export default function PricingPage() {
         console.log('[payment] Access token present after refresh:', !!accessToken);
       }
 
+      // Create order with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch('/api/pay', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify({ amount: 4900, access_token: accessToken }), // ₹49
+        body: JSON.stringify({ amount: 4900, access_token: accessToken }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
       const order = await response.json();
 
       if (!response.ok) {
         throw new Error(order.error || 'Failed to create order');
       }
+
+      setPaymentStep('opening-gateway');
 
       // Initialize Razorpay
       const options = {
@@ -86,6 +99,7 @@ export default function PricingPage() {
           color: '#000000',
         },
         handler: async function (response: any) {
+          setPaymentStep('processing');
           try {
             // Verify payment
             const verifyResponse = await fetch('/api/verify', {
@@ -107,29 +121,63 @@ export default function PricingPage() {
             if (verifyResult.success) {
               // Payment successful - redirect to correct dashboard based on user profile
               const redirectPath = profile ? getRedirectPath(profile) : '/dashboard1/physics';
+              setShowPaymentOverlay(false);
               router.push(redirectPath);
             } else {
+              setShowPaymentOverlay(false);
               alert('Payment verification failed. Please contact support.');
             }
           } catch (error) {
             console.error('Payment verification error:', error);
+            setShowPaymentOverlay(false);
             alert('Payment verification failed. Please contact support.');
           }
         },
         modal: {
           ondismiss: function () {
             setIsLoading(false);
+            setShowPaymentOverlay(false);
+            setPaymentStep('idle');
+          },
+          onhidden: function () {
+            setIsLoading(false);
+            setShowPaymentOverlay(false);
+            setPaymentStep('idle');
           },
         },
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      // Small delay to ensure overlay is visible before opening gateway
+      setTimeout(() => {
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      }, 100);
+      
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Failed to initiate payment. Please try again.');
+      setShowPaymentOverlay(false);
+      setPaymentStep('idle');
+      
+      if (error instanceof Error && error.name === 'AbortError') {
+        alert('Payment request timed out. Please check your connection and try again.');
+      } else {
+        alert('Failed to initiate payment. Please try again.');
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getPaymentStepMessage = () => {
+    switch (paymentStep) {
+      case 'creating-order':
+        return 'Creating payment order...';
+      case 'opening-gateway':
+        return 'Opening payment gateway...';
+      case 'processing':
+        return 'Processing payment...';
+      default:
+        return 'Preparing payment...';
     }
   };
 
@@ -139,6 +187,20 @@ export default function PricingPage() {
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="lazyOnload"
       />
+      
+      {/* Payment Processing Overlay */}
+      {showPaymentOverlay && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-8 max-w-md w-full mx-4 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <h3 className="text-xl font-semibold text-white mb-2">Processing Payment</h3>
+            <p className="text-gray-400 mb-4">{getPaymentStepMessage()}</p>
+            <div className="text-sm text-gray-500">
+              Please do not close this window or navigate away
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="min-h-screen bg-black text-white py-20 px-4">
         <div className="max-w-6xl mx-auto space-y-12">

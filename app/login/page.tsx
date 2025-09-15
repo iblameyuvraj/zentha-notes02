@@ -27,12 +27,12 @@ export default function LoginPage() {
 
   // Handle redirect after successful login
   useEffect(() => {
-    if (profile && !loading) {
+    if (profile && !loading && success) {
       const redirectPath = getRedirectPath(profile)
       console.log('Redirecting to:', redirectPath)
       router.push(redirectPath)
     }
-  }, [profile, loading, router])
+  }, [profile, loading, success, router])
 
   // Handle cooldown timer
   useEffect(() => {
@@ -90,9 +90,9 @@ export default function LoginPage() {
       }
       
       // Login successful - profile will be fetched by AuthContext
-      // and useEffect will handle redirect
-      setLoading(false)
+      // Set success first, then loading false to trigger redirect
       setSuccess(true)
+      setLoading(false)
     } catch (error) {
       console.error('Login error:', error)
       setError("An unexpected error occurred. Please try again.")
@@ -146,7 +146,7 @@ export default function LoginPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  if (success) {
+  if (success && profile) {
     return (
       <div className="flex min-h-screen bg-black">
         {/* Left Section */}

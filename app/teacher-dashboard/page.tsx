@@ -106,7 +106,7 @@ const FileUpload = ({
     if (!file) return
 
     // Filter files by type and size
-    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif', 'application/zip', 'application/x-7z-compressed']
+    const validTypes = [' /pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif', 'application/zip', 'application/x-7z-compressed']
     const maxSize = 25 * 1024 * 1024 // 25MB
     
     if (!validTypes.includes(file.type)) {
@@ -281,6 +281,9 @@ export default function TeacherDashboard() {
 
   const [errors, setErrors] = useState<{[key: string]: string}>({})
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadStatus, setUploadStatus] = useState('')
+  const [retryCount, setRetryCount] = useState(0)
   const [uploads, setUploads] = useState<any[]>([])
   const [loadingUploads, setLoadingUploads] = useState(true)
   const [deletingUploads, setDeletingUploads] = useState<Set<string>>(new Set())
@@ -403,31 +406,145 @@ export default function TeacherDashboard() {
 
   const handleFileChange = (files: File[]) => {
     const file = files[0] || null
+    
+    // Enhanced file validation
+    if (file) {
+      const validTypes = [
+        'application/pdf', 
+        'application/msword', 
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg', 
+        'image/png', 
+        'image/gif',
+        'application/zip', 
+        'application/x-7z-compressed',
+        'application/x-zip-compressed'
+      ]
+      
+      const maxSize = 25 * 1024 * 1024 // 25MB
+      
+      if (!validTypes.includes(file.type)) {
+        setErrors(prev => ({ ...prev, file: 'Invalid file type. Only PDF, DOC, DOCX, images, ZIP, and 7Z files are allowed.' }))
+        return
+      }
+      
+      if (file.size > maxSize) {
+        setErrors(prev => ({ ...prev, file: 'File size must be under 25MB.' }))
+        return
+      }
+      
+      // Clear file error if validation passes
+      if (errors.file) {
+        setErrors(prev => ({ ...prev, file: '' }))
+      }
+    }
+    
     setFormData((prev) => ({ ...prev, file }))
   }
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {}
     
-    if (!formData.title) newErrors.title = "Title is required"
-    if (!formData.year) newErrors.year = "Year is required"
-    if (formData.year === "1") {
-      if (!formData.subjectCombo) newErrors.subjectCombo = "Subject combination is required"
-    } else {
-      if (!formData.semester) newErrors.semester = "Semester is required"
+    // Enhanced validation with better error messages
+    if (!formData.title.trim()) {
+      newErrors.title = "Title is required"
+    } else if (formData.title.trim().length < 3) {
+      newErrors.title = "Title must be at least 3 characters long"
+    } else if (formData.title.trim().length > 100) {
+      newErrors.title = "Title must be less than 100 characters"
     }
+    
+    if (!formData.year) newErrors.year = "Year is required"
+    
+    if (formData.year === "1") {
+      if (!formData.subjectCombo) newErrors.subjectCombo = "Subject combination is required for 1st year"
+    } else if (formData.year && formData.year !== "1") {
+      if (!formData.semester) newErrors.semester = "Semester is required for this year"
+    }
+    
     if (!formData.subject) newErrors.subject = "Subject is required"
-    if (!formData.type) newErrors.type = "Type is required"
-    if (!formData.file) newErrors.file = "File is required"
+    if (!formData.type) newErrors.type = "Type (Notes/Assignment) is required"
+    
+    if (!formData.file) {
+      newErrors.file = "File is required"
+    } else {
+      // Re-validate file if present
+      const validTypes = [
+        'application/pdf', 
+        'application/msword', 
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg', 
+        'image/png', 
+        'image/gif',
+        'application/zip', 
+        'application/x-7z-compressed',
+        'application/x-zip-compressed'
+      ]
+      
+      if (!validTypes.includes(formData.file.type)) {
+        newErrors.file = 'Invalid file type. Only PDF, DOC, DOCX, images, ZIP, and 7Z files are allowed.'
+      } else if (formData.file.size > 25 * 1024 * 1024) {
+        newErrors.file = 'File size must be under 25MB.'
+      }
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
+  }
+
+  const uploadWithRetry = async (uploadData: UploadData, maxRetries = 3): Promise<any> => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        setUploadStatus(`Uploading file... (Attempt ${attempt}/${maxRetries})`)
+        setUploadProgress(20 * attempt)
+        
+        // Upload file to storage
+        const uploadResult = await uploadFile(uploadData)
+        
+        if (!uploadResult.success) {
+          if (attempt === maxRetries) {
+            throw new Error(uploadResult.error || "Failed to upload file")
+          }
+          continue
+        }
+        
+        setUploadStatus("Saving upload record...")
+        setUploadProgress(80)
+        
+        // Save upload record to database
+        const saveResult = await saveUploadRecord(uploadData, uploadResult)
+        
+        if (!saveResult.success) {
+          if (attempt === maxRetries) {
+            throw new Error("File uploaded but failed to save record: " + saveResult.error)
+          }
+          continue
+        }
+        
+        setUploadProgress(100)
+        setUploadStatus("Upload completed successfully!")
+        return { success: true }
+        
+      } catch (error) {
+        console.error(`Upload attempt ${attempt} failed:`, error)
+        if (attempt === maxRetries) {
+          throw error
+        }
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
+      }
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors in the form before submitting",
+        variant: "destructive"
+      })
       return
     }
 
@@ -441,55 +558,36 @@ export default function TeacherDashboard() {
     }
 
     setIsUploading(true)
+    setUploadProgress(0)
+    setUploadStatus("Preparing upload...")
+    setRetryCount(0)
 
     try {
       // Prepare upload data
       const uploadData: UploadData = {
-        title: formData.title,
+        title: formData.title.trim(),
         year: formData.year,
         semester: formData.semester,
         subjectCombo: formData.subjectCombo,
         subject: formData.subject,
         type: formData.type as 'Notes' | 'Assignment',
-        description: formData.description,
+        description: formData.description.trim(),
         file: formData.file
       }
 
-      // Upload file to storage
-      const uploadResult = await uploadFile(uploadData)
-      
-      if (!uploadResult.success) {
-        toast({
-          title: "Upload Failed",
-          description: uploadResult.error || "Failed to upload file",
-          variant: "destructive"
-        })
-        return
-      }
-
-      // Save upload record to database
-      const saveResult = await saveUploadRecord(uploadData, uploadResult)
-      
-      if (!saveResult.success) {
-        toast({
-          title: "Upload Failed",
-          description: "File uploaded but failed to save record: " + saveResult.error,
-          variant: "destructive"
-        })
-        return
-      }
+      await uploadWithRetry(uploadData)
 
       // Success
       toast({
         title: "Upload Successful",
-        description: "Your file has been uploaded successfully",
+        description: "Your file has been uploaded successfully and is now available to students",
       })
 
       // Show logout reminder
       setShowLogoutReminder(true)
       setTimeout(() => {
         setShowLogoutReminder(false)
-      }, 7000) // Show for 3 seconds
+      }, 7000)
 
       // Reset form
       setFormData({
@@ -509,13 +607,17 @@ export default function TeacherDashboard() {
 
     } catch (error) {
       console.error('Upload error:', error)
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred during upload"
+      
       toast({
         title: "Upload Failed",
-        description: "An unexpected error occurred during upload",
+        description: errorMessage,
         variant: "destructive"
       })
     } finally {
       setIsUploading(false)
+      setUploadProgress(0)
+      setUploadStatus("")
     }
   }
 
@@ -824,16 +926,32 @@ export default function TeacherDashboard() {
                 {errors.file && <p className="text-red-400 text-sm mt-1">{errors.file}</p>}
               </div>
 
+              {/* Upload Progress */}
+              {isUploading && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-300">{uploadStatus}</span>
+                    <span className="text-gray-300">{uploadProgress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
               <Button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700" 
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed" 
                 size="lg"
                 disabled={isUploading}
               >
                 {isUploading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Uploading...
+                    {uploadStatus || "Uploading..."}
                   </>
                 ) : (
                   <>
