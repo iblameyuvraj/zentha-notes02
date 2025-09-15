@@ -106,7 +106,7 @@ const FileUpload = ({
     if (!file) return
 
     // Filter files by type and size
-    const validTypes = [' /pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif', 'application/zip', 'application/x-7z-compressed']
+    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif', 'application/zip', 'application/x-7z-compressed']
     const maxSize = 25 * 1024 * 1024 // 25MB
     
     if (!validTypes.includes(file.type)) {
