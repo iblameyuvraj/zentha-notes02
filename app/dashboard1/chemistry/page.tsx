@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Settings as SettingsIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
  
-import UploadedContent from "@/components/ui/uploaded-content"
+import UploadedContentChemistry from "@/components/ui/uploaded-content-chemistry"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 
@@ -557,7 +557,7 @@ export default function StudentDashboard() {
           </TabsContent>
           
           <TabsContent value="uploaded-content" className="mt-6">
-            <UploadedContent />
+            <UploadedContentChemistry />
           </TabsContent>
         </Tabs>
 

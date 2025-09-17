@@ -669,7 +669,7 @@ export default function TeacherDashboard() {
           "Chemistry",
           "Civil",
           "Communication Skill",
-          "Mathematics",
+          "Mathematics (Common)",
           "Mechanical"
         ]
       }
@@ -717,7 +717,8 @@ export default function TeacherDashboard() {
             <h1 className="text-3xl font-bold text-white mb-2">Teacher Upload Portal</h1>
             <p className="text-gray-400">Upload and manage your educational materials</p>
           </div>
-          
+          "PPS", 
+
           {/* User Info Display */}
           <div>
             <div className="flex items-center space-x-3">

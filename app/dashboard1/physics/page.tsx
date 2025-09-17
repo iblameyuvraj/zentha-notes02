@@ -9,7 +9,7 @@ import { Settings as SettingsIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import PDFViewerNew from "@/components/ui/pdf-viewer-new"
 import midtermPapers from "./sem1-json/midterm.json"
-import UploadedContent from "@/components/ui/uploaded-content"
+import UploadedContentPhysics from "@/components/ui/uploaded-content-physics"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/contexts/AuthContext"
 
@@ -552,7 +552,7 @@ export default function StudentDashboard() {
           </TabsContent>
           
           <TabsContent value="uploaded-content" className="mt-6">
-            <UploadedContent />
+            <UploadedContentPhysics />
           </TabsContent>
         </Tabs>
 
